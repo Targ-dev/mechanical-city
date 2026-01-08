@@ -11,12 +11,16 @@
   "dependencies": {
     "next": "latest",
     "react": "latest",
-    "react-dom": "latest"
+    "react-dom": "latest",
+    "zustand": "^5.0.9"
   },
   "devDependencies": {
-    "typescript": "latest",
-    "tailwindcss": "latest",
+    "@tailwindcss/postcss": "^4.1.18",
+    "@types/node": "25.0.3",
+    "@types/react": "19.2.7",
+    "autoprefixer": "latest",
     "postcss": "latest",
-    "autoprefixer": "latest"
+    "tailwindcss": "latest",
+    "typescript": "latest"
   }
 }
