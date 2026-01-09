@@ -25,6 +25,12 @@ export default function AdminLayout({
                     >
                         <span className="font-medium">Products</span>
                     </Link>
+                    <Link
+                        href="/admin/orders"
+                        className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                        <span className="font-medium">Orders</span>
+                    </Link>
                 </nav>
             </aside>
 

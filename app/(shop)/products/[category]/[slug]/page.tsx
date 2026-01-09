@@ -30,37 +30,39 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
     return (
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-            <div className="aspect-square bg-gray-100 relative w-full">
-                <Image
-                    src={product.image}
-                    alt={product.title}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    priority
-                />
-            </div>
-
-            <div className="p-6 space-y-4">
-                <div>
-                    <span className="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full mb-3 uppercase tracking-wider">
-                        {product.category.name}
-                    </span>
-                    <h1 className="text-3xl font-bold text-gray-900 leading-tight">
-                        {product.title}
-                    </h1>
+            <div className="grid grid-cols-1 md:grid-cols-2">
+                <div className="aspect-square bg-gray-100 relative w-full border-b md:border-b-0 md:border-r border-gray-200">
+                    <Image
+                        src={product.image}
+                        alt={product.title}
+                        fill
+                        className="object-cover p-8 md:p-12 hover:scale-105 transition-transform duration-300"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        priority
+                    />
                 </div>
 
-                <p className="text-gray-600 leading-relaxed text-lg">
-                    {product.description}
-                </p>
+                <div className="p-8 md:p-12 space-y-6 flex flex-col justify-center bg-white">
+                    <div>
+                        <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 text-xs font-bold rounded-full mb-4 uppercase tracking-wider">
+                            {product.category.name}
+                        </span>
+                        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 leading-tight mb-2">
+                            {product.title}
+                        </h1>
+                    </div>
 
-                <div className="pt-4 border-t border-gray-100">
-                    <p className="text-3xl font-bold text-gray-900 mb-6">
-                        ${product.price.toFixed(2)}
+                    <p className="text-gray-600 leading-relaxed text-lg">
+                        {product.description}
                     </p>
 
-                    <AddToCartButton product={product} />
+                    <div className="pt-6 border-t border-gray-100">
+                        <p className="text-4xl font-bold text-gray-900 mb-8">
+                            ${product.price.toFixed(2)}
+                        </p>
+
+                        <AddToCartButton product={product} />
+                    </div>
                 </div>
             </div>
         </div>

@@ -42,6 +42,16 @@ export default function Header() {
                 Products
               </Link>
             </li>
+            {mounted && user && (
+              <li>
+                <Link
+                  href="/orders"
+                  className="transition-colors hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                >
+                  Orders
+                </Link>
+              </li>
+            )}
             <li className="relative">
               <Link
                 href="/cart"

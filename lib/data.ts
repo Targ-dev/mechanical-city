@@ -3,50 +3,74 @@ import { Product } from '@/types/product'
 export const products: Product[] = [
     {
         id: '1',
-        slug: 'mechanical-keyboard-pro',
-        title: 'Mechanical Keyboard Pro',
-        price: 149.99,
-        image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&h=500&fit=crop',
-        description: 'A high-performance mechanical keyboard with custom switches and RGB lighting.',
+        slug: 'professional-hammer-drill',
+        title: 'Professional Hammer Drill',
+        price: 199.99,
+        image: '/images/products/1.png',
+        description: 'Heavy-duty 18V cordless hammer drill with brushless motor for maximum performance.',
         category: {
-            name: 'Mechanical Keyboards',
-            slug: 'mechanical-keyboards'
+            name: 'Drills',
+            slug: 'drills'
         }
     },
     {
         id: '2',
-        slug: 'wireless-mechanical-keyboard',
-        title: 'Wireless Mechanical Keyboard',
-        price: 129.99,
-        image: 'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=500&h=500&fit=crop',
-        description: 'Experience the freedom of wireless connectivity without compromising on tactile feedback.',
+        slug: 'circular-saw-pro',
+        title: '7-1/4" Circular Saw',
+        price: 159.99,
+        image: '/images/products/2.jpeg',
+        description: 'High-torque circular saw designed for precision cutting in wood and composite materials.',
         category: {
-            name: 'Wireless Keyboards',
-            slug: 'wireless-keyboards'
+            name: 'Saws',
+            slug: 'saws'
         }
     },
     {
         id: '3',
-        slug: 'rgb-mechanical-keyboard',
-        title: 'RGB Mechanical Keyboard',
-        price: 179.99,
-        image: 'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=500&h=500&fit=crop',
-        description: 'Illuminate your setup with customizable per-key RGB lighting and premium switches.',
+        slug: 'angle-grinder-4-inch',
+        title: '4-1/2" Angle Grinder',
+        price: 89.99,
+        image: '/images/products/3.jpg',
+        description: 'Compact and powerful angle grinder ideal for cutting, grinding, and polishing.',
         category: {
-            name: 'Gaming Keyboards',
-            slug: 'gaming-keyboards'
+            name: 'Grinders',
+            slug: 'grinders'
         }
     },
     {
         id: '4',
-        slug: 'compact-mechanical-keyboard',
-        title: 'Compact Mechanical Keyboard',
-        price: 99.99,
-        image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500&h=500&fit=crop',
-        description: 'Save desk space with this compact 60% layout mechanical keyboard.',
+        slug: 'random-orbit-sander',
+        title: 'Random Orbit Sander',
+        price: 79.99,
+        image: '/images/products/4.jpg',
+        description: 'Variable speed random orbit sander for a swirl-free finish on wood and metal.',
         category: {
-            name: 'Compact Keyboards',
-            slug: 'compact-keyboards'
+            name: 'Sanders',
+            slug: 'sanders'
+        }
+    },
+    {
+        id: '5',
+        slug: 'impact-driver-kit',
+        title: '18V Impact Driver Kit',
+        price: 149.99,
+        image: '/images/products/5.webp',
+        description: 'Compact impact driver delivering 1500 in-lbs of torque for fastening applications.',
+        category: {
+            name: 'Drills',
+            slug: 'drills'
+        }
+    },
+    {
+        id: '6',
+        slug: 'reciprocating-saw',
+        title: 'Cordless Reciprocating Saw',
+        price: 129.99,
+        image: '/images/products/6.webp',
+        description: 'Versatile reciprocating saw for demolition and rough cutting tasks.',
+        category: {
+            name: 'Saws',
+            slug: 'saws'
         }
     }
 ]
