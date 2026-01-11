@@ -2,13 +2,19 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const authCookie = request.cookies.get('auth')
+  const authToken = request.cookies.get('auth_token')
   const { pathname } = request.nextUrl
 
-  // Protected routes
-  if (pathname.startsWith('/cart') || pathname.startsWith('/admin')) {
-    if (!authCookie) {
+  // Define protected routes
+  const protectedRoutes = ['/cart', '/checkout', '/orders', '/admin']
+
+  // Check if current path starts with any protected route
+  const isProtected = protectedRoutes.some(route => pathname.startsWith(route))
+
+  if (isProtected) {
+    if (!authToken) {
       const loginUrl = new URL('/login', request.url)
+      // Store the original URL to redirect back after login
       loginUrl.searchParams.set('redirect', pathname)
       return NextResponse.redirect(loginUrl)
     }
@@ -18,5 +24,10 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/cart/:path*', '/admin/:path*'],
+  matcher: [
+    '/cart/:path*',
+    '/checkout/:path*',
+    '/orders/:path*',
+    '/admin/:path*'
+  ],
 }

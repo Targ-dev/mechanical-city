@@ -1,8 +1,17 @@
 import Link from 'next/link'
-import { products } from '@/lib/data'
-import { Category } from '@/types/product'
+import { Category, Product } from '@/types/product'
 
-export default function ProductsPage() {
+async function getProducts() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products`, {
+    cache: 'no-store',
+  })
+  if (!res.ok) return []
+  return res.json()
+}
+
+export default async function ProductsPage() {
+  const products: Product[] = await getProducts()
+
   // Derive unique categories from products
   const categoriesMap = new Map<string, Category>()
 

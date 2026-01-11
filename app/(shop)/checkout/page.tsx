@@ -1,7 +1,7 @@
 'use client'
 
 import { useCartStore } from '@/store/cart.store'
-import { useOrderStore } from '@/store/order.store'
+
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -11,7 +11,7 @@ import { useEffect, useState } from 'react'
 export default function CheckoutPage() {
   const router = useRouter()
   const { items, getSubtotal, clearCart } = useCartStore()
-  const { placeOrder } = useOrderStore()
+
   const [mounted, setMounted] = useState(false)
 
   // Local state for form
@@ -38,40 +38,71 @@ export default function CheckoutPage() {
     setFormData(prev => ({ ...prev, [id]: value }))
   }
 
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   // Handle Place Order
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (items.length === 0) {
       alert('Your cart is empty!')
       return
     }
 
-    // Basic check for empty fields (optional per requirements but good UX)
     if (!formData.name || !formData.address) {
-      // Just proceeding for now as "No validation" is a requirement, 
-      // but typically we'd return here. 
-      // We'll trust the user fills it out for the "happy path".
+      // Requirement says no validation, but basic check is fine.
+      // We'll proceed if these are filled, or just rely on the API/Mongodb to error if strict (but DB has defaults/required).
+      // Actually user requirement says "No validation", but usually empty payload is bad. 
+      // Sticking to existing logic or minimal check. 
+      // But wait, the existing logic had empty check comments.
+      // I'll keep it simple.
     }
 
-    const orderId = crypto.randomUUID()
+    setIsSubmitting(true)
 
-    // Create Order Object
-    const newOrder: any = { // Using any temporarily if strict type checking hinders rapid prototyping, but better to match interface
-      id: orderId,
-      items: [...items], // Clone items
-      total: total,
-      status: 'pending',
-      createdAt: new Date().toISOString(),
-      shippingDetails: { ...formData }
+    try {
+      const payload = {
+        items: items.map(item => ({
+          productId: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity
+        })),
+        shippingAddress: {
+          fullName: formData.name,
+          phone: formData.phone,
+          address: formData.address,
+          city: formData.city,
+          pincode: formData.pincode
+        },
+        subtotal,
+        total
+      }
+
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to place order')
+      }
+
+      const data = await response.json()
+
+      // Clear Cart
+      clearCart()
+
+      // Redirect
+      router.push('/orders')
+
+    } catch (error) {
+      console.error('Error placing order:', error)
+      // Do not redirect
+    } finally {
+      setIsSubmitting(false)
     }
-
-    // Dispatch Action
-    placeOrder(newOrder)
-
-    // Clear Cart
-    clearCart()
-
-    // Redirect
-    router.push('/orders')
   }
 
   if (!mounted) return <div className="min-h-screen bg-gray-50" />
@@ -183,7 +214,7 @@ export default function CheckoutPage() {
                       {item.image ? (
                         <Image
                           src={item.image}
-                          alt={item.title}
+                          alt={item.name}
                           fill
                           className="object-cover"
                         />
@@ -196,7 +227,7 @@ export default function CheckoutPage() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-gray-900 truncate">{item.title}</h3>
+                      <h3 className="text-sm font-medium text-gray-900 truncate">{item.name}</h3>
                       <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                     </div>
                     <div className="text-sm font-medium text-gray-900">
@@ -224,10 +255,10 @@ export default function CheckoutPage() {
 
             <button
               onClick={handlePlaceOrder}
-              disabled={items.length === 0}
-              className={`w-full mt-6 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] ${items.length === 0 ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}
+              disabled={items.length === 0 || isSubmitting}
+              className={`w-full mt-6 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] ${items.length === 0 || isSubmitting ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}
             >
-              Place Order
+              {isSubmitting ? 'Processing...' : 'Place Order'}
             </button>
           </section>
         </div>
@@ -241,10 +272,10 @@ export default function CheckoutPage() {
         </div>
         <button
           onClick={handlePlaceOrder}
-          disabled={items.length === 0}
-          className={`w-full text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] ${items.length === 0 ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}
+          disabled={items.length === 0 || isSubmitting}
+          className={`w-full text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] ${items.length === 0 || isSubmitting ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}
         >
-          Place Order
+          {isSubmitting ? 'Processing...' : 'Place Order'}
         </button>
       </div>
     </div>

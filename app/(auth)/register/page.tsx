@@ -10,21 +10,37 @@ function RegisterForm() {
   const searchParams = useSearchParams()
   const redirect = searchParams.get('redirect')
   const register = useAuthStore((state) => state.register)
+  const isAuthLoading = useAuthStore((state) => state.isLoading)
+  const authError = useAuthStore((state) => state.error)
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
     const name = formData.get('name') as string
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
-    register(name, email, password)
-    router.push(redirect || '/')
+    const success = await register(name, email, password)
+    if (success) {
+      router.push(redirect || '/')
+    }
   }
 
   return (
     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
       <form className="space-y-6" onSubmit={handleSubmit}>
+        {authError && (
+          <div className="rounded-md bg-red-50 p-4">
+            <div className="flex">
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">Registration failed</h3>
+                <div className="mt-2 text-sm text-red-700">
+                  <p>{authError}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
             Full Name
@@ -76,9 +92,10 @@ function RegisterForm() {
         <div>
           <button
             type="submit"
-            className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            disabled={isAuthLoading}
+            className={`flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${isAuthLoading ? 'opacity-75 cursor-not-allowed' : ''}`}
           >
-            Register
+            {isAuthLoading ? 'Creating account...' : 'Register'}
           </button>
         </div>
       </form>

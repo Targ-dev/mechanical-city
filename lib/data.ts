@@ -4,7 +4,7 @@ export const products: Product[] = [
     {
         id: '1',
         slug: 'professional-hammer-drill',
-        title: 'Professional Hammer Drill',
+        name: 'Professional Hammer Drill',
         price: 199.99,
         image: '/images/products/1.png',
         description: 'Heavy-duty 18V cordless hammer drill with brushless motor for maximum performance.',
@@ -16,7 +16,7 @@ export const products: Product[] = [
     {
         id: '2',
         slug: 'circular-saw-pro',
-        title: '7-1/4" Circular Saw',
+        name: '7-1/4" Circular Saw',
         price: 159.99,
         image: '/images/products/2.jpeg',
         description: 'High-torque circular saw designed for precision cutting in wood and composite materials.',
@@ -28,7 +28,7 @@ export const products: Product[] = [
     {
         id: '3',
         slug: 'angle-grinder-4-inch',
-        title: '4-1/2" Angle Grinder',
+        name: '4-1/2" Angle Grinder',
         price: 89.99,
         image: '/images/products/3.jpg',
         description: 'Compact and powerful angle grinder ideal for cutting, grinding, and polishing.',
@@ -40,7 +40,7 @@ export const products: Product[] = [
     {
         id: '4',
         slug: 'random-orbit-sander',
-        title: 'Random Orbit Sander',
+        name: 'Random Orbit Sander',
         price: 79.99,
         image: '/images/products/4.jpg',
         description: 'Variable speed random orbit sander for a swirl-free finish on wood and metal.',
@@ -52,7 +52,7 @@ export const products: Product[] = [
     {
         id: '5',
         slug: 'impact-driver-kit',
-        title: '18V Impact Driver Kit',
+        name: '18V Impact Driver Kit',
         price: 149.99,
         image: '/images/products/5.webp',
         description: 'Compact impact driver delivering 1500 in-lbs of torque for fastening applications.',
@@ -64,7 +64,7 @@ export const products: Product[] = [
     {
         id: '6',
         slug: 'reciprocating-saw',
-        title: 'Cordless Reciprocating Saw',
+        name: 'Cordless Reciprocating Saw',
         price: 129.99,
         image: '/images/products/6.webp',
         description: 'Versatile reciprocating saw for demolition and rough cutting tasks.',

@@ -15,7 +15,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="aspect-square bg-gray-100 relative">
         <Image
           src={product.image}
-          alt={product.title}
+          alt={product.name}
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -23,7 +23,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
       <div className="p-4">
         <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">
-          {product.title}
+          {product.name}
         </h3>
         <p className="text-lg font-bold text-gray-900">
           ${product.price.toFixed(2)}

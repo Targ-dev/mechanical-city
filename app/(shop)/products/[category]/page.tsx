@@ -1,13 +1,15 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ProductCard from '@/components/product/ProductCard'
-import { products } from '@/lib/data'
+import { Product } from '@/types/product'
 
-export async function generateStaticParams() {
-    const categories = new Set(products.map((product) => product.category.slug))
-    return Array.from(categories).map((slug) => ({
-        category: slug,
-    }))
+async function getCategoryProducts(categorySlug: string) {
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products?category=${categorySlug}`,
+        { cache: 'no-store' }
+    )
+    if (!res.ok) return []
+    return res.json()
 }
 
 interface CategoryPageProps {
@@ -18,27 +20,17 @@ interface CategoryPageProps {
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
     const { category } = await params
+    const categoryProducts: Product[] = await getCategoryProducts(category)
 
-    // Find products for this category
-    const categoryProducts = products.filter(
-        (product) => product.category.slug === category
-    )
-
-    // 404 if no products found (invalid category)
+    // 404 if no products found (invalid category or empty)
     if (categoryProducts.length === 0) {
-        // Debugging: Show what we received vs what we have
-        const availableCategories = Array.from(new Set(products.map(p => p.category.slug)))
         return (
             <div className="p-8">
-                <h1 className="text-2xl font-bold text-red-600 mb-4">Debug: Category Not Found</h1>
-                <p><strong>Received Param:</strong> "{category}"</p>
-                <p><strong>Param Type:</strong> {typeof category}</p>
-                <p><strong>Available Categories:</strong></p>
-                <ul className="list-disc pl-5">
-                    {availableCategories.map(c => (
-                        <li key={c}>"{c}" (Match: {c === category ? 'Yes' : 'No'})</li>
-                    ))}
-                </ul>
+                <h1 className="text-2xl font-bold text-red-600 mb-4">Category Not Found</h1>
+                <p>No products found for category: "{category}"</p>
+                <Link href="/products" className="text-blue-600 hover:underline mt-4 block">
+                    Return to Shop
+                </Link>
             </div>
         )
     }
@@ -66,7 +58,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {categoryProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                 ))}

@@ -1,12 +1,29 @@
 'use client'
 
+import { useRouter } from 'next/navigation'
 import ProductForm from '@/components/admin/ProductForm'
 import { Product } from '@/types/product'
 
 export default function NewProductPage() {
-    const handleCreate = (data: Partial<Product>) => {
-        console.log('Creating product:', data)
-        alert('Product created! Check console for data.')
+    const router = useRouter()
+
+    const handleCreate = async (data: Partial<Product>) => {
+        try {
+            const res = await fetch('/api/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            })
+
+            if (res.ok) {
+                router.push('/admin/products')
+            } else {
+                const err = await res.json()
+                alert(`Error: ${err.error}`)
+            }
+        } catch (error) {
+            alert('An error occurred while creating product')
+        }
     }
 
     return (
@@ -26,3 +43,4 @@ export default function NewProductPage() {
         </div>
     )
 }
+

@@ -18,7 +18,7 @@ const CATEGORIES = [
 
 export default function ProductForm({ initialData, onSubmit, submitLabel }: ProductFormProps) {
     const [formData, setFormData] = useState<Partial<Product>>({
-        title: initialData?.title || '',
+        name: initialData?.name || '',
         price: initialData?.price || 0,
         image: initialData?.image || '',
         description: initialData?.description || '',
@@ -52,15 +52,15 @@ export default function ProductForm({ initialData, onSubmit, submitLabel }: Prod
 
                 {/* Title */}
                 <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
                         Product Name
                     </label>
                     <div className="mt-1 sm:mt-0 sm:col-span-2">
                         <input
                             type="text"
-                            name="title"
-                            id="title"
-                            value={formData.title}
+                            name="name"
+                            id="name"
+                            value={formData.name}
                             onChange={handleChange}
                             className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md p-2 border"
                             required
@@ -110,21 +110,56 @@ export default function ProductForm({ initialData, onSubmit, submitLabel }: Prod
                     </div>
                 </div>
 
-                {/* Image URL */}
+                {/* Image Upload */}
                 <div className="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
                     <label htmlFor="image" className="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
-                        Image URL
+                        Product Image
                     </label>
-                    <div className="mt-1 sm:mt-0 sm:col-span-2">
-                        <input
-                            type="text"
-                            name="image"
-                            id="image"
-                            value={formData.image}
-                            onChange={handleChange}
-                            className="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:max-w-xs sm:text-sm border-gray-300 rounded-md p-2 border"
-                            required
-                        />
+                    <div className="mt-1 sm:mt-0 sm:col-span-2 space-y-4">
+                        <div className="flex items-center space-x-4">
+                            {formData.image && (
+                                <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-gray-200">
+                                    <img
+                                        src={formData.image}
+                                        alt="Preview"
+                                        className="h-full w-full object-cover"
+                                    />
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                id="image"
+                                accept="image/*"
+                                onChange={async (e) => {
+                                    const file = e.target.files?.[0]
+                                    if (!file) return
+
+                                    const uploadFormData = new FormData()
+                                    uploadFormData.append('file', file)
+
+                                    try {
+                                        const res = await fetch('/api/upload', {
+                                            method: 'POST',
+                                            body: uploadFormData
+                                        })
+                                        if (res.ok) {
+                                            const { url } = await res.json()
+                                            setFormData(prev => ({ ...prev, image: url }))
+                                        } else {
+                                            alert('Failed to upload image')
+                                        }
+                                    } catch (err) {
+                                        alert('Error uploading image')
+                                    }
+                                }}
+                                className="block w-full text-sm text-gray-500
+                                file:mr-4 file:py-2 file:px-4
+                                file:rounded-md file:border-0
+                                file:text-sm file:font-semibold
+                                file:bg-indigo-50 file:text-indigo-700
+                                hover:file:bg-indigo-100"
+                            />
+                        </div>
                     </div>
                 </div>
 

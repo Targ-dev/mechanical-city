@@ -53,7 +53,7 @@ export default function CartPage() {
                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 relative">
                   <Image
                     src={item.image}
-                    alt={item.title}
+                    alt={item.name}
                     fill
                     className="object-cover object-center"
                   />
@@ -64,7 +64,7 @@ export default function CartPage() {
                     <div className="flex justify-between text-base font-medium text-gray-900">
                       <h3>
                         <Link href={`/products/${item.category.slug}/${item.slug}`}>
-                          {item.title}
+                          {item.name}
                         </Link>
                       </h3>
                       <p className="ml-4">${(item.price * item.quantity).toFixed(2)}</p>

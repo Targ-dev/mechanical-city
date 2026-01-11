@@ -1,8 +1,17 @@
 import Hero from '@/components/ui/Hero'
 import ProductList from '@/components/product/ProductList'
-import { products } from '@/lib/data'
 
-export default function ShopHome() {
+async function getProducts() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products`, {
+    cache: 'no-store',
+  })
+  if (!res.ok) return []
+  return res.json()
+}
+
+export default async function ShopHome() {
+  const products = await getProducts()
+
   return (
     <>
       <Hero

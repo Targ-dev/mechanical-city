@@ -1,29 +1,29 @@
-'use client'
-
-import React, { useEffect, useState, use } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useOrderStore } from '@/store/order.store'
+import { IOrder } from '@/models/Order'
 
-export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = use(params)
-    const orders = useOrderStore((state) => state.orders)
-    const [mounted, setMounted] = useState(false)
-    const [status, setStatus] = useState('Placed')
+async function getOrders() {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/orders`, {
+        cache: 'no-store',
+    })
+    if (!res.ok) {
+        throw new Error('Failed to fetch orders')
+    }
+    return res.json()
+}
 
-    const order = orders.find((o) => o.id === id)
+export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
+    let orders: (IOrder & { _id: string })[] = []
 
-    useEffect(() => {
-        setMounted(true)
-    }, [])
+    try {
+        orders = await getOrders()
+    } catch (error) {
+        console.error('Error loading orders:', error)
+    }
 
-    useEffect(() => {
-        if (order) {
-            setStatus(order.status || 'Placed')
-        }
-    }, [order])
-
-    if (!mounted) return <div className="p-8">Loading details...</div>
+    const order = orders.find((o) => o._id.toString() === id)
 
     if (!order) {
         return (
@@ -41,7 +41,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     }
 
     const getStatusColor = (s: string) => {
-        switch (s.toLowerCase()) {
+        switch (s?.toLowerCase()) {
             case 'processing': return 'bg-yellow-100 text-yellow-800'
             case 'shipped': return 'bg-purple-100 text-purple-800'
             case 'delivered': return 'bg-green-100 text-green-800'
@@ -62,9 +62,9 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-                            Order #{order.id.slice(0, 8).toUpperCase()}
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(status)}`}>
-                                {status}
+                            Order #{order._id.toString().slice(0, 8).toUpperCase()}
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.status)}`}>
+                                {order.status}
                             </span>
                         </h1>
                         <p className="text-sm text-gray-500 mt-1">
@@ -72,22 +72,8 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-white p-2 rounded-lg border border-gray-200">
-                        <label htmlFor="status-select" className="text-sm font-medium text-gray-700 whitespace-nowrap">
-                            Update Status:
-                        </label>
-                        <select
-                            id="status-select"
-                            value={status}
-                            onChange={(e) => setStatus(e.target.value)}
-                            className="block w-full rounded-md border-gray-300 py-1.5 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                        >
-                            <option value="Placed">Placed</option>
-                            <option value="Processing">Processing</option>
-                            <option value="Shipped">Shipped</option>
-                            <option value="Delivered">Delivered</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
+                    <div className="flex items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-200 opacity-75 cursor-not-allowed">
+                        <span className="text-sm font-medium text-gray-500">Status Updates Disabled</span>
                     </div>
                 </div>
             </div>
@@ -102,21 +88,28 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                         </div>
                         <table className="min-w-full divide-y divide-gray-200">
                             <tbody className="divide-y divide-gray-200">
-                                {order.items.map((item, idx) => (
+                                {order.items.map((item: any, idx: number) => (
                                     <tr key={idx}>
                                         <td className="px-6 py-4">
                                             <div className="flex items-center">
-                                                <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 relative">
-                                                    <Image
-                                                        src={item.image}
-                                                        alt={item.title}
-                                                        fill
-                                                        className="object-cover"
-                                                    />
+                                                <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 relative bg-gray-100">
+                                                    {item.image ? (
+                                                        <Image
+                                                            src={item.image}
+                                                            alt={item.name}
+                                                            fill
+                                                            className="object-cover"
+                                                        />
+                                                    ) : (
+                                                        <div className="flex items-center justify-center w-full h-full text-gray-400">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                                            </svg>
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div className="ml-4">
-                                                    <div className="text-sm font-medium text-gray-900">{item.title}</div>
-                                                    <div className="text-sm text-gray-500">{item.category.name}</div>
+                                                    <div className="text-sm font-medium text-gray-900">{item.name}</div>
                                                 </div>
                                             </div>
                                         </td>
@@ -140,18 +133,18 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                             <h3 className="font-semibold text-gray-900">Customer Details</h3>
                         </div>
                         <div className="p-6 space-y-4">
-                            {order.shippingDetails ? (
+                            {order.shippingAddress ? (
                                 <>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Contact</label>
-                                        <div className="text-sm font-medium text-gray-900">{order.shippingDetails.name}</div>
-                                        <div className="text-sm text-gray-500">{order.shippingDetails.phone}</div>
+                                        <div className="text-sm font-medium text-gray-900">{order.shippingAddress.fullName}</div>
+                                        <div className="text-sm text-gray-500">{order.shippingAddress.phone}</div>
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Shipping Address</label>
                                         <div className="text-sm text-gray-600">
-                                            {order.shippingDetails.address}<br />
-                                            {order.shippingDetails.city}, {order.shippingDetails.pincode}
+                                            {order.shippingAddress.address}<br />
+                                            {order.shippingAddress.city}, {order.shippingAddress.pincode}
                                         </div>
                                     </div>
                                 </>
@@ -168,11 +161,12 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                         <div className="p-6 space-y-3">
                             <div className="flex justify-between text-sm text-gray-600">
                                 <span>Subtotal</span>
-                                <span>${(order.total - 15).toFixed(2)}</span>
+                                <span>${(order.subtotal || (order.total - 15)).toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between text-sm text-gray-600">
                                 <span>Shipping</span>
-                                <span>$15.00</span>
+                                {/* Assuming standard shipping since it wasn't preserved in model separately? Wait, models/Order.ts has subtotal and total. */}
+                                <span>${(order.total - (order.subtotal || (order.total - 15))).toFixed(2)}</span>
                             </div>
                             <div className="pt-3 border-t border-gray-100 flex justify-between text-base font-bold text-gray-900">
                                 <span>Total</span>

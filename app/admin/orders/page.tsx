@@ -1,65 +1,57 @@
-'use client'
-
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
-import { useOrderStore } from '@/store/order.store'
+import { IOrder } from '@/models/Order'
 
-export default function AdminOrdersPage() {
-    const { placeOrder, orders } = useOrderStore()
-    const [mounted, setMounted] = useState(false)
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import jwt from 'jsonwebtoken'
+import connectDB from '@/lib/db'
+import Order from '@/models/Order'
+import User from '@/models/User'
 
-    useEffect(() => {
-        setMounted(true)
-    }, [])
+async function getOrders() {
+    const cookieStore = await cookies()
+    const token = cookieStore.get('auth_token')?.value
 
-    const handleCreateDummy = () => {
-        const dummyOrder: any = {
-            id: crypto.randomUUID(),
-            items: [
-                {
-                    id: 'dummy-1',
-                    slug: 'dummy-product',
-                    title: 'Professional Hammer Drill',
-                    price: 199.99,
-                    image: '/products/drill.jpg',
-                    description: 'A powerful drill.',
-                    category: { name: 'Drills', slug: 'drills' },
-                    quantity: 1
-                }
-            ],
-            total: 214.99,
-            status: 'pending',
-            createdAt: new Date().toISOString(),
-            shippingDetails: {
-                name: 'Jane Smith',
-                phone: '+1 (555) 123-4567',
-                address: '123 Mock Lane',
-                city: 'Demo City',
-                pincode: '90210'
-            }
+    if (!token) return null
+
+    try {
+        if (!process.env.JWT_SECRET) return null
+        const decoded = jwt.verify(token, process.env.JWT_SECRET) as { id: string }
+
+        await connectDB()
+        const user = await User.findById(decoded.id)
+
+        if (!user || user.role !== 'admin') {
+            return null
+            // Or redirect('/') ideally, but for data fetching helper return null is safer
         }
-        placeOrder(dummyOrder)
-        alert('Dummy order created!')
+
+        const orders = await Order.find({}).sort({ createdAt: -1 })
+        return JSON.parse(JSON.stringify(orders))
+    } catch (error) {
+        console.error('Error fetching admin orders:', error)
+        return null
     }
+}
 
-    if (!mounted) return <div className="p-8">Loading...</div>
+export default async function AdminOrdersPage() {
+    let orders: (IOrder & { _id: string })[] = []
 
-    // Sort orders by most recent first
-    const sortedOrders = [...orders].sort((a, b) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    )
+    try {
+        const result = await getOrders()
+        if (result) {
+            orders = result
+        }
+    } catch (error) {
+        console.error('Error loading orders:', error)
+    }
 
     return (
         <div className="p-6">
             <div className="flex items-center justify-between mb-8">
                 <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
                 <div className="flex items-center gap-4">
-                    <button
-                        onClick={handleCreateDummy}
-                        className="text-sm bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg transition-colors border border-gray-300"
-                    >
-                        + Dummy Order
-                    </button>
                     <div className="text-sm text-gray-500">
                         Total Orders: <span className="font-semibold text-gray-900">{orders.length}</span>
                     </div>
@@ -95,23 +87,23 @@ export default function AdminOrdersPage() {
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {sortedOrders.length === 0 ? (
+                            {orders.length === 0 ? (
                                 <tr>
                                     <td colSpan={7} className="px-6 py-12 text-center text-sm text-gray-500">
                                         No orders found.
                                     </td>
                                 </tr>
                             ) : (
-                                sortedOrders.map((order) => (
-                                    <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+                                orders.map((order) => (
+                                    <tr key={order._id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            #{order.id.slice(0, 8).toUpperCase()}
+                                            #{order._id.toString().slice(0, 8).toUpperCase()}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {new Date(order.createdAt).toLocaleDateString()}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {order.shippingDetails?.name || 'Guest'}
+                                            {order.shippingAddress?.fullName || 'Guest'}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             {order.items.reduce((acc, item) => acc + item.quantity, 0)} items
@@ -120,13 +112,16 @@ export default function AdminOrdersPage() {
                                             ${order.total.toFixed(2)}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                Placed
+                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
+                                                ${order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                                                    order.status === 'shipped' ? 'bg-blue-100 text-blue-800' :
+                                                        'bg-yellow-100 text-yellow-800'}`}>
+                                                {order.status}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <Link
-                                                href={`/admin/orders/${order.id}`}
+                                                href={`/admin/orders/${order._id}`}
                                                 className="text-blue-600 hover:text-blue-900 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-md transition-colors"
                                             >
                                                 View
