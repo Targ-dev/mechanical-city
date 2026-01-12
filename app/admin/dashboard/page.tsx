@@ -5,7 +5,7 @@ async function getStats() {
         const cookieStore = await cookies()
         const token = cookieStore.get('auth_token')?.value
 
-        const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/admin/stats`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/admin/stats`, {
             headers: {
                 'Cookie': `auth_token=${token}`
             },

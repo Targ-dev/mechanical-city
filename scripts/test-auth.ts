@@ -1,5 +1,5 @@
 
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://mechanical-city.vercel.app';
 
 async function testAuth() {
     console.log('🧪 Starting Auth API Verification...');

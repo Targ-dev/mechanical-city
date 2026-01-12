@@ -15,7 +15,7 @@ async function verifyIsolation() {
     const { default: Order } = await import('../models/Order');
 
     await connectDB();
-    const BASE_URL = 'http://localhost:3000';
+    const BASE_URL = 'http://mechanical-city.vercel.app';
 
     // 1. Setup Test Users
     const userAEmail = `userA-${Date.now()}@test.com`;

@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { Category, Product } from '@/types/product'
 
 async function getProducts() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/products`, {
     cache: 'no-store',
   })
   if (!res.ok) return []
@@ -10,7 +10,7 @@ async function getProducts() {
 }
 
 async function getCategories() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/categories`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/categories`, {
     cache: 'no-store',
   })
   if (!res.ok) return []

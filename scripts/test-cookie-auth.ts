@@ -11,7 +11,7 @@ async function testCookieAuth() {
     const { default: connectDB } = await import('../lib/db');
     const { default: User } = await import('../models/User');
 
-    const BASE_URL = 'http://localhost:3000';
+    const BASE_URL = 'http://mechanical-city.vercel.app';
     const testEmail = `cookie-test-${Date.now()}@example.com`;
     const password = 'securePass123';
 

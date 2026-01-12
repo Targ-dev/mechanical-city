@@ -8,7 +8,7 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 async function testMiddleware() {
     console.log('🛡️ Starting Middleware Protection Verification...');
 
-    const BASE_URL = 'http://localhost:3000';
+    const BASE_URL = 'http://mechanical-city.vercel.app';
     const PROTECTED_ROUTES = ['/orders', '/cart', '/checkout', '/admin/dashboard'];
 
     // 1. Test Access WITHOUT Cookie (Should Redirect)

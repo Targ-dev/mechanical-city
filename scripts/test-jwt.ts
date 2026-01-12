@@ -13,7 +13,7 @@ async function testJWT() {
     const { default: jwt } = await import('jsonwebtoken');
     const { default: bcrypt } = await import('bcryptjs'); // Import bcrypt to verify locally
 
-    const BASE_URL = 'http://localhost:3000';
+    const BASE_URL = 'http://mechanical-city.vercel.app';
     const testEmail = `jwt-test-${Date.now()}@example.com`;
     const password = 'securePass123';
 

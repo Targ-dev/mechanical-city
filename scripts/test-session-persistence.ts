@@ -7,7 +7,7 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
 async function testSessionPersistence() {
     console.log('🧪 Testing Session Persistence API...');
-    const BASE_URL = 'http://localhost:3000';
+    const BASE_URL = 'http://mechanical-city.vercel.app';
 
     // 1. Register/Login to get cookie
     const email = `session-test-${Date.now()}@test.com`;

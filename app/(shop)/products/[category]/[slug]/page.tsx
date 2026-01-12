@@ -7,7 +7,7 @@ async function getProduct(categorySlug: string, productSlug: string) {
     // Since we only have "get all" or "get by category", we fetch by category and find the item.
     // Ideally, API should support /api/products/[slug] or /api/products?slug=...
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products?category=${categorySlug}`,
+        `${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/products?category=${categorySlug}`,
         { cache: 'no-store' }
     )
     if (!res.ok) return null

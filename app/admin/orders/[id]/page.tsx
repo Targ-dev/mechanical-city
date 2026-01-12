@@ -6,7 +6,7 @@ import { headers } from 'next/headers'
 import StatusSelector from './StatusSelector'
 
 async function getOrder(id: string) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/orders/${id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/orders/${id}`, {
         cache: 'no-store',
         headers: await headers(),
     })

@@ -13,7 +13,7 @@ const { default: Order } = await import('../models/Order');
 async function verifyIsolation() {
     console.log('🕵️‍♀️ Starting Order Visibility Verification...');
     await connectDB();
-    const BASE_URL = 'http://localhost:3000';
+    const BASE_URL = 'http://mechanical-city.vercel.app';
 
     // 1. Setup Test Users
     const userAEmail = `userA-${Date.now()}@test.com`;
