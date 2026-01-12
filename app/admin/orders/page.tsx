@@ -109,7 +109,7 @@ export default async function AdminOrdersPage() {
                                             {order.items.reduce((acc, item) => acc + item.quantity, 0)} items
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            ${order.total.toFixed(2)}
+                                            ₹{order.total.toFixed(2)}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize

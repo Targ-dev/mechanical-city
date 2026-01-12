@@ -60,7 +60,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
                     <div className="pt-6 border-t border-gray-100">
                         <p className="text-4xl font-bold text-gray-900 mb-8">
-                            ${product.price.toFixed(2)}
+                            ₹{product.price.toFixed(2)}
                         </p>
 
                         <AddToCartButton product={product} />

@@ -2,40 +2,56 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { IOrder } from '@/models/Order'
+import { headers } from 'next/headers'
+import StatusSelector from './StatusSelector'
 
-async function getOrders() {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/orders`, {
+async function getOrder(id: string) {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/orders/${id}`, {
         cache: 'no-store',
+        headers: await headers(),
     })
+
+    if (res.status === 404) {
+        return null
+    }
+
     if (!res.ok) {
-        throw new Error('Failed to fetch orders')
+        throw new Error('Failed to fetch order')
     }
     return res.json()
 }
 
 export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
-    let orders: (IOrder & { _id: string })[] = []
+    let order: (IOrder & { _id: string }) | null = null
 
     try {
-        orders = await getOrders()
+        order = await getOrder(id)
     } catch (error) {
-        console.error('Error loading orders:', error)
+        console.error('Error loading order:', error)
     }
-
-    const order = orders.find((o) => o._id.toString() === id)
 
     if (!order) {
         return (
-            <div className="p-8 text-center max-w-lg mx-auto">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Order Not Found</h2>
-                <p className="text-gray-600 mb-6">The order you are looking for does not exist or has been removed.</p>
-                <Link
-                    href="/admin/orders"
-                    className="inline-block bg-blue-600 text-white px-6 py-2.5 rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                    Back to Orders
-                </Link>
+            <div className="flex flex-col items-center justify-center min-h-[60vh] p-8 text-center bg-gray-50 rounded-xl my-8 mx-auto max-w-2xl border border-gray-200">
+                <div className="bg-white p-4 rounded-full shadow-sm mb-6">
+                    <svg className="w-16 h-16 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-3">Order Not Found</h2>
+                <p className="text-gray-600 mb-8 max-w-md">The order ID <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-gray-800">{id}</code> could not be found. It may have been deleted or the link is incorrect.</p>
+                <div className="flex gap-4">
+                    <Link
+                        href="/admin/orders"
+                        className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    >
+                        <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back to Orders
+                    </Link>
+                </div>
             </div>
         )
     }
@@ -72,9 +88,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-200 opacity-75 cursor-not-allowed">
-                        <span className="text-sm font-medium text-gray-500">Status Updates Disabled</span>
-                    </div>
+                    <StatusSelector orderId={order._id.toString()} currentStatus={order.status} />
                 </div>
             </div>
 
@@ -114,10 +128,10 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            <span className="text-gray-900 font-medium">{item.quantity}</span> x ${item.price.toFixed(2)}
+                                            <span className="text-gray-900 font-medium">{item.quantity}</span> x ₹{item.price.toFixed(2)}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium text-gray-900">
-                                            ${(item.quantity * item.price).toFixed(2)}
+                                            ₹{(item.quantity * item.price).toFixed(2)}
                                         </td>
                                     </tr>
                                 ))}
@@ -161,16 +175,16 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
                         <div className="p-6 space-y-3">
                             <div className="flex justify-between text-sm text-gray-600">
                                 <span>Subtotal</span>
-                                <span>${(order.subtotal || (order.total - 15)).toFixed(2)}</span>
+                                <span>₹{(order.subtotal || (order.total - 15)).toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between text-sm text-gray-600">
                                 <span>Shipping</span>
                                 {/* Assuming standard shipping since it wasn't preserved in model separately? Wait, models/Order.ts has subtotal and total. */}
-                                <span>${(order.total - (order.subtotal || (order.total - 15))).toFixed(2)}</span>
+                                <span>₹{(order.total - (order.subtotal || (order.total - 15))).toFixed(2)}</span>
                             </div>
                             <div className="pt-3 border-t border-gray-100 flex justify-between text-base font-bold text-gray-900">
                                 <span>Total</span>
-                                <span>${order.total.toFixed(2)}</span>
+                                <span>₹{order.total.toFixed(2)}</span>
                             </div>
                         </div>
                     </div>

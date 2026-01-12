@@ -9,20 +9,39 @@ interface ProductFormProps {
     submitLabel: string
 }
 
-const CATEGORIES = [
-    { name: 'Mechanical Keyboards', slug: 'mechanical-keyboards' },
-    { name: 'Wireless Keyboards', slug: 'wireless-keyboards' },
-    { name: 'Gaming Keyboards', slug: 'gaming-keyboards' },
-    { name: 'Compact Keyboards', slug: 'compact-keyboards' },
-]
+import { useEffect } from 'react'
+
+interface Category {
+    _id: string
+    name: string
+    slug: string
+}
 
 export default function ProductForm({ initialData, onSubmit, submitLabel }: ProductFormProps) {
+    const [categories, setCategories] = useState<Category[]>([])
+
+    // Fetch categories on mount
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await fetch('/api/categories')
+                if (res.ok) {
+                    const data = await res.json()
+                    setCategories(data)
+                }
+            } catch (error) {
+                console.error('Error fetching categories:', error)
+            }
+        }
+        fetchCategories()
+    }, [])
+
     const [formData, setFormData] = useState<Partial<Product>>({
         name: initialData?.name || '',
         price: initialData?.price || 0,
         image: initialData?.image || '',
         description: initialData?.description || '',
-        category: initialData?.category || CATEGORIES[0],
+        category: initialData?.category || { name: '', slug: '' },
         ...initialData,
     })
 
@@ -37,9 +56,9 @@ export default function ProductForm({ initialData, onSubmit, submitLabel }: Prod
         if (name === 'price') {
             setFormData(prev => ({ ...prev, [name]: parseFloat(value) }))
         } else if (name === 'category') {
-            const selectedCategory = CATEGORIES.find(c => c.slug === value)
+            const selectedCategory = categories.find(c => c.slug === value)
             if (selectedCategory) {
-                setFormData(prev => ({ ...prev, category: selectedCategory }))
+                setFormData(prev => ({ ...prev, category: { name: selectedCategory.name, slug: selectedCategory.slug } }))
             }
         } else {
             setFormData(prev => ({ ...prev, [name]: value }))
@@ -81,7 +100,8 @@ export default function ProductForm({ initialData, onSubmit, submitLabel }: Prod
                             onChange={handleChange}
                             className="max-w-lg block focus:ring-indigo-500 focus:border-indigo-500 w-full shadow-sm sm:max-w-xs sm:text-sm border-gray-300 rounded-md p-2 border"
                         >
-                            {CATEGORIES.map((category) => (
+                            <option value="">Select a category</option>
+                            {categories.map((category) => (
                                 <option key={category.slug} value={category.slug}>
                                     {category.name}
                                 </option>

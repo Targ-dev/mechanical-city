@@ -22,6 +22,13 @@ export default function CheckoutPage() {
     city: '',
     pincode: ''
   })
+  const [errors, setErrors] = useState({
+    name: '',
+    phone: '',
+    address: '',
+    city: '',
+    pincode: ''
+  })
 
   // Prevent hydration errors
   useEffect(() => {
@@ -36,6 +43,48 @@ export default function CheckoutPage() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target
     setFormData(prev => ({ ...prev, [id]: value }))
+    // Clear error when user types
+    if (errors[id as keyof typeof errors]) {
+      setErrors(prev => ({ ...prev, [id]: '' }))
+    }
+  }
+
+  const validateForm = () => {
+    let isValid = true
+    const newErrors = {
+      name: '',
+      phone: '',
+      address: '',
+      city: '',
+      pincode: ''
+    }
+
+    if (!formData.name.trim()) {
+      newErrors.name = 'Full Name is required'
+      isValid = false
+    }
+    if (!formData.phone.trim()) {
+      newErrors.phone = 'Phone Number is required'
+      isValid = false
+    } else if (!/^\+?[\d\s-]{10,}$/.test(formData.phone.trim())) {
+      newErrors.phone = 'Please enter a valid phone number'
+      isValid = false
+    }
+    if (!formData.address.trim()) {
+      newErrors.address = 'Address is required'
+      isValid = false
+    }
+    if (!formData.city.trim()) {
+      newErrors.city = 'City is required'
+      isValid = false
+    }
+    if (!formData.pincode.trim()) {
+      newErrors.pincode = 'Pincode is required'
+      isValid = false
+    }
+
+    setErrors(newErrors)
+    return isValid
   }
 
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -47,13 +96,8 @@ export default function CheckoutPage() {
       return
     }
 
-    if (!formData.name || !formData.address) {
-      // Requirement says no validation, but basic check is fine.
-      // We'll proceed if these are filled, or just rely on the API/Mongodb to error if strict (but DB has defaults/required).
-      // Actually user requirement says "No validation", but usually empty payload is bad. 
-      // Sticking to existing logic or minimal check. 
-      // But wait, the existing logic had empty check comments.
-      // I'll keep it simple.
+    if (!validateForm()) {
+      return
     }
 
     setIsSubmitting(true)
@@ -140,8 +184,9 @@ export default function CheckoutPage() {
                   value={formData.name}
                   onChange={handleInputChange}
                   placeholder="John Doe"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-gray-50 focus:bg-white"
+                  className={`w-full px-4 py-3 rounded-xl border focus:ring-2 transition-all outline-none bg-gray-50 focus:bg-white ${errors.name ? 'border-red-500 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 focus:border-blue-500 focus:ring-blue-200'}`}
                 />
+                {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
               </div>
 
               <div>
@@ -152,8 +197,9 @@ export default function CheckoutPage() {
                   value={formData.phone}
                   onChange={handleInputChange}
                   placeholder="+1 (555) 000-0000"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-gray-50 focus:bg-white"
+                  className={`w-full px-4 py-3 rounded-xl border focus:ring-2 transition-all outline-none bg-gray-50 focus:bg-white ${errors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 focus:border-blue-500 focus:ring-blue-200'}`}
                 />
+                {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
               </div>
 
               <div>
@@ -164,8 +210,9 @@ export default function CheckoutPage() {
                   value={formData.address}
                   onChange={handleInputChange}
                   placeholder="Street address, apartment, suite, etc."
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-gray-50 focus:bg-white resize-none"
+                  className={`w-full px-4 py-3 rounded-xl border focus:ring-2 transition-all outline-none bg-gray-50 focus:bg-white resize-none ${errors.address ? 'border-red-500 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 focus:border-blue-500 focus:ring-blue-200'}`}
                 />
+                {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
@@ -177,8 +224,9 @@ export default function CheckoutPage() {
                     value={formData.city}
                     onChange={handleInputChange}
                     placeholder="New York"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-gray-50 focus:bg-white"
+                    className={`w-full px-4 py-3 rounded-xl border focus:ring-2 transition-all outline-none bg-gray-50 focus:bg-white ${errors.city ? 'border-red-500 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 focus:border-blue-500 focus:ring-blue-200'}`}
                   />
+                  {errors.city && <p className="text-red-500 text-sm mt-1">{errors.city}</p>}
                 </div>
                 <div>
                   <label htmlFor="pincode" className="block text-sm font-medium text-gray-700 mb-1">Pincode</label>
@@ -188,8 +236,9 @@ export default function CheckoutPage() {
                     value={formData.pincode}
                     onChange={handleInputChange}
                     placeholder="10001"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all outline-none bg-gray-50 focus:bg-white"
+                    className={`w-full px-4 py-3 rounded-xl border focus:ring-2 transition-all outline-none bg-gray-50 focus:bg-white ${errors.pincode ? 'border-red-500 focus:border-red-500 focus:ring-red-200' : 'border-gray-200 focus:border-blue-500 focus:ring-blue-200'}`}
                   />
+                  {errors.pincode && <p className="text-red-500 text-sm mt-1">{errors.pincode}</p>}
                 </div>
               </div>
             </form>
@@ -231,7 +280,7 @@ export default function CheckoutPage() {
                       <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                     </div>
                     <div className="text-sm font-medium text-gray-900">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      ₹{(item.price * item.quantity).toFixed(2)}
                     </div>
                   </div>
                 ))
@@ -241,15 +290,15 @@ export default function CheckoutPage() {
             <div className="border-t border-gray-100 pt-4 space-y-2">
               <div className="flex justify-between text-sm text-gray-600">
                 <span>Subtotal</span>
-                <span>${subtotal.toFixed(2)}</span>
+                <span>₹{subtotal.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm text-gray-600">
                 <span>Shipping</span>
-                <span>${shipping.toFixed(2)}</span>
+                <span>₹{shipping.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-base font-bold text-gray-900 pt-2 border-t border-gray-100 mt-2">
                 <span>Total</span>
-                <span>${total.toFixed(2)}</span>
+                <span>₹{total.toFixed(2)}</span>
               </div>
             </div>
 
@@ -268,7 +317,7 @@ export default function CheckoutPage() {
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 p-4 shadow-lg z-20">
         <div className="flex items-center justify-between mb-3">
           <span className="text-sm text-gray-500">Total</span>
-          <span className="text-lg font-bold text-gray-900">${total.toFixed(2)}</span>
+          <span className="text-lg font-bold text-gray-900">₹{total.toFixed(2)}</span>
         </div>
         <button
           onClick={handlePlaceOrder}

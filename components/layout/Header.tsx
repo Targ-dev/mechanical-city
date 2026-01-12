@@ -73,15 +73,17 @@ export default function Header() {
           `}
         >
           <ul className="flex flex-col md:flex-row items-center gap-6 text-sm font-medium text-gray-700 w-full md:w-auto">
-            <li>
-              <Link
-                href="/products"
-                className="transition-colors hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 block py-2 md:py-0"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Products
-              </Link>
-            </li>
+            {mounted && user?.role !== 'admin' && (
+              <li>
+                <Link
+                  href="/products"
+                  className="transition-colors hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 block py-2 md:py-0"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Products
+                </Link>
+              </li>
+            )}
             {mounted && user && (
               <li>
                 <Link
@@ -93,20 +95,22 @@ export default function Header() {
                 </Link>
               </li>
             )}
-            <li className="relative">
-              <Link
-                href="/cart"
-                className="transition-colors hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 flex items-center gap-1 py-2 md:py-0"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Cart
-                {mounted && totalItems > 0 && (
-                  <span className="inline-flex items-center justify-center bg-red-600 text-white text-[10px] font-bold h-4 w-4 rounded-full leading-none">
-                    {totalItems}
-                  </span>
-                )}
-              </Link>
-            </li>
+            {mounted && user?.role !== 'admin' && (
+              <li className="relative">
+                <Link
+                  href="/cart"
+                  className="transition-colors hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 flex items-center gap-1 py-2 md:py-0"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Cart
+                  {totalItems > 0 && (
+                    <span className="inline-flex items-center justify-center bg-red-600 text-white text-[10px] font-bold h-4 w-4 rounded-full leading-none">
+                      {totalItems}
+                    </span>
+                  )}
+                </Link>
+              </li>
+            )}
 
             {!mounted ? (
               <li className="w-12"></li>

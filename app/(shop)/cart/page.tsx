@@ -67,7 +67,7 @@ export default function CartPage() {
                           {item.name}
                         </Link>
                       </h3>
-                      <p className="ml-4">${(item.price * item.quantity).toFixed(2)}</p>
+                      <p className="ml-4">₹{(item.price * item.quantity).toFixed(2)}</p>
                     </div>
                     <p className="mt-1 text-sm text-gray-500">{item.category.name}</p>
                   </div>
@@ -115,15 +115,15 @@ export default function CartPage() {
               <dl className="-my-4 divide-y divide-gray-200 text-sm">
                 <div className="flex items-center justify-between py-4">
                   <dt className="text-gray-600">Subtotal</dt>
-                  <dd className="font-medium text-gray-900">${subtotal.toFixed(2)}</dd>
+                  <dd className="font-medium text-gray-900">₹{subtotal.toFixed(2)}</dd>
                 </div>
                 <div className="flex items-center justify-between py-4">
                   <dt className="text-gray-600">Shipping</dt>
-                  <dd className="font-medium text-gray-900">${shipping.toFixed(2)}</dd>
+                  <dd className="font-medium text-gray-900">₹{shipping.toFixed(2)}</dd>
                 </div>
                 <div className="flex items-center justify-between py-4 border-t border-gray-200">
                   <dt className="text-base font-medium text-gray-900">Total</dt>
-                  <dd className="text-base font-medium text-gray-900">${total.toFixed(2)}</dd>
+                  <dd className="text-base font-medium text-gray-900">₹{total.toFixed(2)}</dd>
                 </div>
               </dl>
             </div>

@@ -72,7 +72,7 @@ export default async function OrdersPage() {
                                 </div>
                                 <div>
                                     <p className="font-medium text-gray-900">Total</p>
-                                    <p>${order.total.toFixed(2)}</p>
+                                    <p>₹{order.total.toFixed(2)}</p>
                                 </div>
                                 <div>
                                     <p className="font-medium text-gray-900">Order #</p>
@@ -111,7 +111,7 @@ export default async function OrdersPage() {
                                         <div className="ml-4 flex-1">
                                             <div className="flex items-center justify-between">
                                                 <h4 className="text-sm font-medium text-gray-900">{item.name}</h4>
-                                                <p className="text-sm font-medium text-gray-900">${item.price.toFixed(2)}</p>
+                                                <p className="text-sm font-medium text-gray-900">₹{item.price.toFixed(2)}</p>
                                             </div>
                                             <p className="text-sm text-gray-500 mt-1">Qty: {item.quantity}</p>
                                         </div>

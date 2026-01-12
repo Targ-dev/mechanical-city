@@ -27,7 +27,7 @@ export default async function DashboardPage() {
         { name: 'Total Products', value: stats?.totalProducts ?? 0 },
         { name: 'Total Orders', value: stats?.totalOrders ?? 0 },
         { name: 'Total Users', value: stats?.totalUsers ?? 0 },
-        { name: 'Total Revenue', value: `$${(stats?.totalRevenue ?? 0).toFixed(2)}` },
+        { name: 'Total Revenue', value: `₹${(stats?.totalRevenue ?? 0).toFixed(2)}` },
     ]
 
     return (

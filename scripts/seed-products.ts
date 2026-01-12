@@ -1,10 +1,10 @@
-
 // Load environment variables from .env.local
 import * as dotenv from 'dotenv';
 dotenv.config({ path: '.env.local' });
 
 import connectDB from '../lib/db';
 import Product from '../models/Product';
+import Category from '../models/Category';
 
 const products = [
     {
@@ -125,17 +125,39 @@ async function seed() {
         await connectDB();
         console.log('Connected to DB');
 
-        console.log('Clearing old products...');
+        console.log('Clearing old data...');
         await Product.deleteMany({});
-        console.log('Products cleared');
+        await Category.deleteMany({});
+        console.log('Data cleared');
 
-        console.log('Seeding new products...');
+        // Extract unique categories
+        const categoriesMap = new Map();
+        products.forEach(p => {
+            if (!categoriesMap.has(p.category.slug)) {
+                categoriesMap.set(p.category.slug, {
+                    name: p.category.name,
+                    slug: p.category.slug,
+                    description: `All ${p.category.name} products`
+                });
+            }
+        });
+
+        const categories = Array.from(categoriesMap.values());
+
+        console.log(`Seeding ${categories.length} categories...`);
+        const createdCategories = await Category.insertMany(categories);
+        console.log('Categories seeded');
+
+        console.log(`Seeding ${products.length} products...`);
+        // We can just insert products as is since they embed the same structure
+        // But cleaner if we ensure consistency. The current Product model embeds {name, slug}
+        // which matches the seed data.
         await Product.insertMany(products);
         console.log('Products seeded successfully');
 
         process.exit(0);
     } catch (error) {
-        console.error('Error seeding products:', error);
+        console.error('Error seeding data:', error);
         process.exit(1);
     }
 }

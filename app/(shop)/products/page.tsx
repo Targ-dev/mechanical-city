@@ -9,22 +9,17 @@ async function getProducts() {
   return res.json()
 }
 
+async function getCategories() {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/categories`, {
+    cache: 'no-store',
+  })
+  if (!res.ok) return []
+  return res.json()
+}
+
 export default async function ProductsPage() {
   const products: Product[] = await getProducts()
-
-  // Derive unique categories from products
-  const categoriesMap = new Map<string, Category>()
-
-  products.forEach((product) => {
-    if (!categoriesMap.has(product.category.slug)) {
-      categoriesMap.set(product.category.slug, product.category)
-    }
-  })
-
-  // Convert map to array and sort by name
-  const categories = Array.from(categoriesMap.values()).sort((a, b) =>
-    a.name.localeCompare(b.name)
-  )
+  const categories: Category[] = await getCategories()
 
   return (
     <div className="space-y-6">

@@ -75,7 +75,7 @@ export default function AdminProductsPage() {
                                         </div>
                                         <div className="hidden md:block">
                                             <p className="text-sm text-gray-900">
-                                                Price: <span className="font-semibold">${product.price.toFixed(2)}</span>
+                                                Price: <span className="font-semibold">₹{product.price.toFixed(2)}</span>
                                             </p>
                                         </div>
                                     </div>
