@@ -4,30 +4,16 @@ import Image from 'next/image'
 import { IOrder } from '@/models/Order'
 import { headers } from 'next/headers'
 import StatusSelector from './StatusSelector'
-import { getBaseUrl } from '@/lib/utils'
+import { getOrderById } from '@/lib/data-service'
 
-async function getOrder(id: string) {
-    const res = await fetch(`${getBaseUrl()}/api/orders/${id}`, {
-        cache: 'no-store',
-        headers: await headers(),
-    })
-
-    if (res.status === 404) {
-        return null
-    }
-
-    if (!res.ok) {
-        throw new Error('Failed to fetch order')
-    }
-    return res.json()
-}
+export const dynamic = 'force-dynamic'
 
 export default async function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params
     let order: (IOrder & { _id: string }) | null = null
 
     try {
-        order = await getOrder(id)
+        order = await getOrderById(id) as (IOrder & { _id: string }) | null
     } catch (error) {
         console.error('Error loading order:', error)
     }

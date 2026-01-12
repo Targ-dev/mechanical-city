@@ -1,26 +1,15 @@
 import Link from 'next/link'
 import { Category, Product } from '@/types/product'
-import { getBaseUrl } from '@/lib/utils'
+import { getProducts, getCategories } from '@/lib/data-service'
 
-async function getProducts() {
-  const res = await fetch(`${getBaseUrl()}/api/products`, {
-    cache: 'no-store',
-  })
-  if (!res.ok) return []
-  return res.json()
-}
+export const dynamic = 'force-dynamic'
 
-async function getCategories() {
-  const res = await fetch(`${getBaseUrl()}/api/categories`, {
-    cache: 'no-store',
-  })
-  if (!res.ok) return []
-  return res.json()
-}
+// Removed async wrapper functions since we can call service directly
+// or keep them if we want to separate concerns, but direct call is simpler.
 
 export default async function ProductsPage() {
-  const products: Product[] = await getProducts()
-  const categories: Category[] = await getCategories()
+  const products: any[] = await getProducts()
+  const categories: any[] = await getCategories()
 
   return (
     <div className="space-y-6">

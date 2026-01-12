@@ -2,19 +2,9 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import AddToCartButton from '@/components/product/AddToCartButton'
 import { Product } from '@/types/product'
-import { getBaseUrl } from '@/lib/utils'
+import { getProductByCategoryAndSlug } from '@/lib/data-service'
 
-async function getProduct(categorySlug: string, productSlug: string) {
-    // Since we only have "get all" or "get by category", we fetch by category and find the item.
-    // Ideally, API should support /api/products/[slug] or /api/products?slug=...
-    const res = await fetch(
-        `${getBaseUrl()}/api/products?category=${categorySlug}`,
-        { cache: 'no-store' }
-    )
-    if (!res.ok) return null
-    const products: Product[] = await res.json()
-    return products.find((p) => p.slug === productSlug) || null
-}
+export const dynamic = 'force-dynamic'
 
 interface ProductPageProps {
     params: Promise<{
@@ -25,7 +15,7 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
     const { category, slug } = await params
-    const product = await getProduct(category, slug)
+    const product: any = await getProductByCategoryAndSlug(category, slug)
 
     if (!product) {
         notFound()

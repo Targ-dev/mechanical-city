@@ -2,16 +2,9 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ProductCard from '@/components/product/ProductCard'
 import { Product } from '@/types/product'
-import { getBaseUrl } from '@/lib/utils'
+import { getProducts } from '@/lib/data-service'
 
-async function getCategoryProducts(categorySlug: string) {
-    const res = await fetch(
-        `${getBaseUrl()}/api/products?category=${categorySlug}`,
-        { cache: 'no-store' }
-    )
-    if (!res.ok) return []
-    return res.json()
-}
+export const dynamic = 'force-dynamic'
 
 interface CategoryPageProps {
     params: Promise<{
@@ -21,7 +14,7 @@ interface CategoryPageProps {
 
 export default async function CategoryPage({ params }: CategoryPageProps) {
     const { category } = await params
-    const categoryProducts: Product[] = await getCategoryProducts(category)
+    const categoryProducts: any[] = await getProducts(category)
 
     // 404 if no products found (invalid category or empty)
     if (categoryProducts.length === 0) {
