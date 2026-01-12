@@ -4,9 +4,10 @@ import Image from 'next/image'
 import { IOrder } from '@/models/Order'
 import { headers } from 'next/headers'
 import StatusSelector from './StatusSelector'
+import { getBaseUrl } from '@/lib/utils'
 
 async function getOrder(id: string) {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/orders/${id}`, {
+    const res = await fetch(`${getBaseUrl()}/api/orders/${id}`, {
         cache: 'no-store',
         headers: await headers(),
     })

@@ -2,10 +2,11 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import ProductCard from '@/components/product/ProductCard'
 import { Product } from '@/types/product'
+import { getBaseUrl } from '@/lib/utils'
 
 async function getCategoryProducts(categorySlug: string) {
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/products?category=${categorySlug}`,
+        `${getBaseUrl()}/api/products?category=${categorySlug}`,
         { cache: 'no-store' }
     )
     if (!res.ok) return []

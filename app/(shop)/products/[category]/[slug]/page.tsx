@@ -2,12 +2,13 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import AddToCartButton from '@/components/product/AddToCartButton'
 import { Product } from '@/types/product'
+import { getBaseUrl } from '@/lib/utils'
 
 async function getProduct(categorySlug: string, productSlug: string) {
     // Since we only have "get all" or "get by category", we fetch by category and find the item.
     // Ideally, API should support /api/products/[slug] or /api/products?slug=...
     const res = await fetch(
-        `${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/products?category=${categorySlug}`,
+        `${getBaseUrl()}/api/products?category=${categorySlug}`,
         { cache: 'no-store' }
     )
     if (!res.ok) return null

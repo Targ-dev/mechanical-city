@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { Category, Product } from '@/types/product'
+import { getBaseUrl } from '@/lib/utils'
 
 async function getProducts() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/products`, {
+  const res = await fetch(`${getBaseUrl()}/api/products`, {
     cache: 'no-store',
   })
   if (!res.ok) return []
@@ -10,7 +11,7 @@ async function getProducts() {
 }
 
 async function getCategories() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/categories`, {
+  const res = await fetch(`${getBaseUrl()}/api/categories`, {
     cache: 'no-store',
   })
   if (!res.ok) return []
