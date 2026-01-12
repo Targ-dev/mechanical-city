@@ -4,11 +4,12 @@ import Category from '@/models/Category'
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await connectDB()
-        const category = await Category.findById(params.id)
+        const { id } = await params
+        const category = await Category.findById(id)
 
         if (!category) {
             return NextResponse.json(
@@ -29,13 +30,14 @@ export async function GET(
 
 export async function PUT(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const body = await req.json()
         await connectDB()
+        const { id } = await params
 
-        const category = await Category.findByIdAndUpdate(params.id, body, {
+        const category = await Category.findByIdAndUpdate(id, body, {
             new: true,
             runValidators: true,
         })
@@ -65,11 +67,12 @@ export async function PUT(
 
 export async function DELETE(
     req: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         await connectDB()
-        const category = await Category.findByIdAndDelete(params.id)
+        const { id } = await params
+        const category = await Category.findByIdAndDelete(id)
 
         if (!category) {
             return NextResponse.json(

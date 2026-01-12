@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
-export default function EditCategoryPage({ params }: { params: { id: string } }) {
+export default function EditCategoryPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = use(params)
     const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [fetching, setFetching] = useState(true)
@@ -22,7 +23,7 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
 
     const fetchCategory = async () => {
         try {
-            const res = await fetch(`/api/categories/${params.id}`)
+            const res = await fetch(`/api/categories/${id}`)
             if (!res.ok) throw new Error('Failed to fetch category')
             const data = await res.json()
             setFormData({
@@ -48,7 +49,7 @@ export default function EditCategoryPage({ params }: { params: { id: string } })
         setError('')
 
         try {
-            const res = await fetch(`/api/categories/${params.id}`, {
+            const res = await fetch(`/api/categories/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
