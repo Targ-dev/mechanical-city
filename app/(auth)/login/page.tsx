@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthStore } from '@/store/auth.store'
-import { FormEvent, Suspense } from 'react'
+import { FormEvent, Suspense, useEffect } from 'react'
 
 function LoginForm() {
   const router = useRouter()
