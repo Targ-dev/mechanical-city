@@ -3,11 +3,11 @@ import { cookies } from 'next/headers'
 async function getStats() {
     try {
         const cookieStore = await cookies()
-        const token = cookieStore.get('auth_token')?.value
+        const token = cookieStore.get('auth_token_v2')?.value
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/admin/stats`, {
             headers: {
-                'Cookie': `auth_token=${token}`
+                'Cookie': `auth_token_v2=${token}`
             },
             cache: 'no-store'
         })

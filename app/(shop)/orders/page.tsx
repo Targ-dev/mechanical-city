@@ -8,7 +8,7 @@ import Order, { IOrder } from '@/models/Order'
 
 async function getOrders() {
     const cookieStore = await cookies()
-    const token = cookieStore.get('auth_token')?.value
+    const token = cookieStore.get('auth_token_v2')?.value
 
     if (!token) return null
 
