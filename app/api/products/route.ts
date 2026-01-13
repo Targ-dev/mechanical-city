@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
   }
 }
 async function isAdmin(request: NextRequest) {
-  const token = request.cookies.get('auth_token')?.value;
+  const token = request.cookies.get('auth_token_v2')?.value;
   if (!token || !process.env.JWT_SECRET) return false;
 
   try {
