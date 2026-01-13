@@ -8,7 +8,7 @@ interface HeroProps {
 
 export default function Hero({ title, subtitle, backgroundImage }: HeroProps) {
     return (
-        <section className="relative h-[600px] flex items-center justify-center bg-gray-900 rounded-xl overflow-hidden mb-12">
+        <section className="relative min-h-[calc(100vh-128px)] w-screen left-[50%] right-[50%] -ml-[50vw] -mr-[50vw] -mt-8 flex items-center justify-center bg-gray-900 overflow-hidden mb-12">
             {/* Background Image */}
             {backgroundImage && (
                 <div
@@ -18,7 +18,7 @@ export default function Hero({ title, subtitle, backgroundImage }: HeroProps) {
             )}
 
             {/* Overlay */}
-            <div className="absolute inset-0 bg-black/60 z-10" />
+            <div className="absolute inset-0 bg-black/50 z-10" />
 
             {/* Content */}
             <div className="relative z-20 max-w-4xl mx-auto px-4 text-center">
@@ -31,7 +31,7 @@ export default function Hero({ title, subtitle, backgroundImage }: HeroProps) {
                 <div className="mt-8">
                     <a
                         href="#products"
-                        className="inline-block bg-blue-600 text-white font-bold py-3 px-8 rounded-full hover:bg-blue-700 transition-colors transform hover:scale-105 duration-200"
+                        className="inline-block bg-secondary text-white font-bold py-3 px-8 rounded-full hover:bg-secondary/80 transition-colors transform hover:scale-105 duration-200"
                     >
                         Shop Now
                     </a>

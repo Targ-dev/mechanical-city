@@ -1,5 +1,45 @@
 @import "tailwindcss";
 
-html, body, #__next {
+@theme {
+  /* Core brand colors */
+  --color-primary: #FFC400;
+  /* Industrial Yellow */
+  --color-secondary: #0B3954;
+  /* Deep Industrial Blue */
+  --color-neutral-dark: #1E1E1E;
+  /* Charcoal (limited use) */
+
+  /* Surfaces */
+  --color-background: #F5F5F5;
+  --color-surface: #FFFFFF;
+
+  /* Text */
+  --color-text-main: #111111;
+  --color-text-muted: #6B7280;
+
+  /* UI */
+  --color-border: #E5E7EB;
+
+  /* Semantic aliases */
+  --color-main: var(--color-text-main);
+  --color-muted: var(--color-text-muted);
+  --color-header: var(--color-secondary);
+  --color-footer: var(--color-secondary);
+  --color-cta: var(--color-primary);
+}
+
+
+html,
+body,
+#__next {
   height: 100%;
+  background-color: var(--color-background);
+  color: var(--color-text-main);
+  overflow-x: hidden;
+}
+
+@layer utilities {
+  .layout-container {
+    @apply mx-auto max-w-[1920px] px-6 sm:px-8 lg:px-12;
+  }
 }
