@@ -25,7 +25,7 @@ export async function GET(request: Request) {
   try {
     const { cookies } = await import('next/headers');
     const cookieStore = await cookies();
-    const token = cookieStore.get('auth_token')?.value;
+    const token = cookieStore.get('auth_token_v2')?.value;
 
     if (!token) {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
@@ -106,7 +106,7 @@ export async function POST(request: Request) {
         { status: 201 }
       );
 
-      response.cookies.set('auth_token', token, {
+      response.cookies.set('auth_token_v2', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -160,7 +160,7 @@ export async function POST(request: Request) {
         { status: 200 }
       );
 
-      response.cookies.set('auth_token', token, {
+      response.cookies.set('auth_token_v2', token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
@@ -176,7 +176,7 @@ export async function POST(request: Request) {
         { status: 200 }
       );
 
-      response.cookies.set('auth_token', '', {
+      response.cookies.set('auth_token_v2', '', {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
