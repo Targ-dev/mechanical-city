@@ -14,6 +14,15 @@ function LoginForm() {
   const isAuthLoading = useAuthStore((state) => state.isLoading)
   const authError = useAuthStore((state) => state.error)
 
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!isAuthLoading && user) {
+      const target = redirect || '/'
+      console.log('User already logged in, redirecting to:', target)
+      router.replace(target)
+    }
+  }, [user, isAuthLoading, redirect, router])
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const formData = new FormData(e.currentTarget)
