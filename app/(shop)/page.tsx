@@ -1,17 +1,12 @@
 import Hero from '@/components/ui/Hero'
-import ProductList from '@/components/product/ProductList'
-
-async function getProducts() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://mechanical-city.vercel.app'}/api/products`, {
-    cache: 'no-store',
-  })
-  if (!res.ok) return []
-  return res.json()
-}
+import TrendingProducts from '@/components/home/TrendingProducts'
+import Benefits from '@/components/home/Benefits'
+import PromoBanners from '@/components/home/PromoBanners'
+import CategoriesGrid from '@/components/home/CategoriesGrid'
+import BoschBanner from '@/components/home/BoschBanner'
+import PopularBrands from '@/components/home/PopularBrands'
 
 export default async function ShopHome() {
-  const products = await getProducts()
-
   return (
     <>
       <Hero
@@ -20,9 +15,17 @@ export default async function ShopHome() {
         backgroundImage="/images/UI/banner.jpg"
       />
 
-      <section className="pb-8">
-        <ProductList products={products} />
-      </section>
+      <Benefits />
+
+      <TrendingProducts />
+
+      <PromoBanners />
+
+      <CategoriesGrid />
+
+      <BoschBanner />
+
+      <PopularBrands />
 
       <section className="bg-background py-16">
         <div className="layout-container text-center max-w-3xl">
