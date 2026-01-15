@@ -198,7 +198,7 @@ export default function Header() {
   )
 
   return (
-    <header className="relative z-40">
+    <header className="sticky top-0 z-50 shadow-md">
 
       {/* Top Main Header (Dark) */}
       <div className="bg-secondary">

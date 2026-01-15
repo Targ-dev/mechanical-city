@@ -27,26 +27,6 @@ export default async function ShopHome() {
 
       <PopularBrands />
 
-      <section className="bg-background py-16">
-        <div className="layout-container text-center max-w-3xl">
-          <h2 className="text-3xl font-bold text-main mb-6">About Us</h2>
-          <div className="space-y-4 text-muted leading-relaxed">
-            <p>
-              Welcome to Mechanical City, your premier destination for professional-grade power tools.
-              We are dedicated to equipping both seasoned professionals and passionate DIY enthusiasts with the
-              highest quality machinery available on the market.
-            </p>
-            <p>
-              Our commitment lies in durability and performance. We strictly curate products that withstand the
-              toughest job sites and rigorous daily use, ensuring that you can rely on your tools when it matters most.
-            </p>
-            <p>
-              Whether you are building a skyscraper or a bookshelf, we believe that the right tool makes all the difference.
-              Experience the power of precision with our comprehensive range of drills, saws, and workshop essentials.
-            </p>
-          </div>
-        </div>
-      </section>
 
       <section className="py-16 layout-container">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">

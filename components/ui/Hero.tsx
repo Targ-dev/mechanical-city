@@ -8,7 +8,7 @@ interface HeroProps {
 
 export default function Hero({ title, subtitle, backgroundImage }: HeroProps) {
     return (
-        <section className="relative min-h-[calc(100vh-80px)] lg:min-h-[calc(100vh-128px)] w-full flex items-center justify-center bg-gray-900 overflow-hidden">
+        <section className="relative min-h-[400px] md:min-h-[550px] lg:min-h-[calc(100vh-128px)] w-full flex items-center justify-center bg-gray-900 overflow-hidden">
             {/* Background Image */}
             {backgroundImage && (
                 <div
