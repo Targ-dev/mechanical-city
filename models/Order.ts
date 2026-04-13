@@ -16,6 +16,7 @@ export interface IShippingAddress {
 }
 
 export interface IOrder extends Document {
+    orderId: string;
     user: mongoose.Types.ObjectId | string;
     items: IOrderItem[];
     shippingAddress: IShippingAddress;
@@ -23,10 +24,16 @@ export interface IOrder extends Document {
     total: number;
     status: string;
     createdAt: Date;
+    updatedAt: Date;
 }
 
 const OrderSchema: Schema = new Schema(
     {
+        orderId: {
+            type: String,
+            required: true,
+            unique: true,
+        },
         user: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
@@ -49,7 +56,11 @@ const OrderSchema: Schema = new Schema(
         },
         subtotal: { type: Number, required: true },
         total: { type: Number, required: true },
-        status: { type: String, default: 'Placed' },
+        status: {
+            type: String,
+            enum: ["awaiting_payment", "paid", "shipped"],
+            default: 'awaiting_payment'
+        },
         createdAt: { type: Date, default: Date.now },
     },
     {

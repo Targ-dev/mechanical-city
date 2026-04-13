@@ -91,6 +91,8 @@ export default function CheckoutPage() {
 
   // Handle Place Order
   const handlePlaceOrder = async () => {
+    if (isSubmitting) return
+
     if (items.length === 0) {
       alert('Your cart is empty!')
       return
@@ -130,6 +132,11 @@ export default function CheckoutPage() {
       })
 
       if (!response.ok) {
+        if (response.status === 429) {
+          const errData = await response.json();
+          alert(errData.error || "Please wait a few seconds before placing another order");
+          return;
+        }
         throw new Error('Failed to place order')
       }
 
@@ -300,6 +307,22 @@ export default function CheckoutPage() {
                 <span>Total</span>
                 <span>₹{total.toFixed(2)}</span>
               </div>
+            </div>
+
+            {/* Payment Section */}
+            <div className="mt-6 border border-gray-100 rounded-xl p-4 bg-gray-50 flex flex-col items-center text-center space-y-3">
+              <h3 className="font-bold text-gray-900">Scan to Pay</h3>
+              <div className="bg-white p-2 rounded-lg border border-gray-200">
+                <div className="relative w-32 h-32 flex items-center justify-center rounded overflow-hidden">
+                  <Image src="/qr-placeholder.png" alt="Payment QR Code" fill className="object-contain" />
+                </div>
+              </div>
+              <p className="text-sm text-gray-600">
+                1. Scan the QR code with any UPI app.<br />
+                2. Pay the total amount: <b>₹{total.toFixed(2)}</b><br />
+                3. Send a screenshot of successful payment to <b>[YOUR_PHONE_NUMBER_HERE]</b> (WhatsApp) along with your name.<br />
+                4. Click "Place Order" below.
+              </p>
             </div>
 
             <button
