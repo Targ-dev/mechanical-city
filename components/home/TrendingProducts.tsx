@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import TrendingProductCard from './TrendingProductCard'
 
 // Mock Data
@@ -165,23 +165,40 @@ export default function TrendingProducts() {
     // On mobile, show only 4? (2 rows).
     // And have Next/Prev buttons that change the visible set.
 
+  const [products, setProducts] = useState<any[]>([])
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const res = await fetch('/api/products')
+                const data = await res.json()
+                if (Array.isArray(data) && data.length > 0) {
+                    setProducts(data)
+                }
+            } catch (err) {
+                console.error("Failed to fetch products for Trending section")
+            }
+        }
+        fetchProducts()
+    }, [])
+
     const [mobilePage, setMobilePage] = useState(0)
-    const totalMobilePages = Math.ceil(MOCK_PRODUCTS.length / ITEMS_PER_PAGE_MOBILE)
+    const totalMobilePages = Math.ceil(products.length / ITEMS_PER_PAGE_MOBILE)
 
     const nextMobilePage = () => {
-        setMobilePage((prev) => (prev + 1) % totalMobilePages)
+        if(totalMobilePages > 0) setMobilePage((prev) => (prev + 1) % totalMobilePages)
     }
 
     const prevMobilePage = () => {
-        setMobilePage((prev) => (prev - 1 + totalMobilePages) % totalMobilePages)
+        if(totalMobilePages > 0) setMobilePage((prev) => (prev - 1 + totalMobilePages) % totalMobilePages)
     }
 
     // Slice for mobile
     const mobileStart = mobilePage * ITEMS_PER_PAGE_MOBILE
-    const mobileProducts = MOCK_PRODUCTS.slice(mobileStart, mobileStart + ITEMS_PER_PAGE_MOBILE)
+    const mobileProducts = products.slice(mobileStart, mobileStart + ITEMS_PER_PAGE_MOBILE)
 
     // For desktop we show 10 (or all)
-    const desktopProducts = MOCK_PRODUCTS.slice(0, 10)
+    const desktopProducts = products.slice(0, 10)
 
     return (
         <section className="py-8 bg-gray-50/50">
@@ -218,7 +235,7 @@ export default function TrendingProducts() {
                             {[...Array(totalMobilePages)].map((_, pageIndex) => (
                                 <div key={pageIndex} className="w-full flex-shrink-0 px-1">
                                     <div className="grid grid-cols-2 gap-4">
-                                        {MOCK_PRODUCTS.slice(pageIndex * ITEMS_PER_PAGE_MOBILE, (pageIndex + 1) * ITEMS_PER_PAGE_MOBILE).map((product) => (
+                                        {products.slice(pageIndex * ITEMS_PER_PAGE_MOBILE, (pageIndex + 1) * ITEMS_PER_PAGE_MOBILE).map((product) => (
                                             <TrendingProductCard key={product.id} product={product} />
                                         ))}
                                     </div>

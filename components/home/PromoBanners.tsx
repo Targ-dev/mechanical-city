@@ -15,7 +15,7 @@ export default async function PromoBanners() {
     const banners = config?.banners || [];
     
     // Fallbacks
-    const promo1 = banners.find(b => b.bannerId === 'promo1') || {
+    const promo1 = banners[1] || {
         imageUrl: '/images/banners/2.jpg',
         subtitle: 'UP TO 10% OFF',
         titleHtml: 'Circular Saw <br />\n<span class="text-[#FFB800]">With Laser</span>',
@@ -23,7 +23,7 @@ export default async function PromoBanners() {
         buttonLink: '/products?category=saws'
     };
 
-    const promo2 = banners.find(b => b.bannerId === 'promo2') || {
+    const promo2 = banners[2] || {
         imageUrl: '/images/banners/1.jpg',
         subtitle: 'UP TO 35% OFF',
         titleHtml: 'DEWALT DW715 <br />\nNEW MACHINE',
@@ -35,7 +35,7 @@ export default async function PromoBanners() {
         <section className="py-8 md:py-12 bg-white">
             <div className="layout-container">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                    {/* Left Banner - Circular Saw */}
+                    {/* Left Banner */}
                     <div className="relative overflow-hidden rounded-xl bg-gray-900 aspect-[21/9] md:aspect-[16/7] group cursor-pointer transition-transform duration-300 hover:scale-[1.01]">
                         <img
                             src={promo1.imageUrl}
@@ -58,7 +58,7 @@ export default async function PromoBanners() {
                         </div>
                     </div>
 
-                    {/* Right Banner - DeWalt Machine */}
+                    {/* Right Banner */}
                     <div className="relative overflow-hidden rounded-xl bg-[#FFB800] aspect-[21/9] md:aspect-[16/7] group cursor-pointer transition-transform duration-300 hover:scale-[1.01]">
                         <img
                             src={promo2.imageUrl}

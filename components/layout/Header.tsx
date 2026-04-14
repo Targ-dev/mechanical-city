@@ -27,124 +27,27 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
     'Screwdriver set'
   ]
 
-  // Mock Data for Mega Menu matching the user's image
-  const categories = [
-    {
-      name: 'Gardening',
-      href: '/products?category=gardening',
-      hasMegaMenu: true,
-      subs: [
-        {
-          title: 'Garden Tools',
-          items: ['Shovels & Spades', 'Rakes', 'Pruners & Shears', 'Garden Hoes', 'Wheelbarrows']
-        },
-        {
-          title: 'Watering & Irrigation',
-          items: ['Hoses', 'Nozzles & Wands', 'Sprinklers', 'Watering Cans', 'Timers']
-        },
-        {
-          title: 'Plant Care',
-          items: ['Pots & Planters', 'Soils & Fertilizers', 'Gloves', 'Plant Supports']
-        },
-        {
-          title: 'Power Equipment',
-          items: ['Lawn Mowers', 'Leaf Blowers', 'String Trimmers', 'Hedge Trimmers']
+  const [categories, setCategories] = useState<{name: string, href: string, hasMegaMenu: boolean, subs?: any[]}[]>([])
+
+  useEffect(() => {
+    // Fetch categories dynamically
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/categories');
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setCategories(data.map((c: any) => ({
+             name: c.name,
+             href: `/products?category=${c.slug}`,
+             hasMegaMenu: false // Dynamic subs not modeled in simple MVP Categories yet
+          })));
         }
-      ]
-    },
-    {
-      name: 'Hand tools',
-      href: '/products?category=hand-tools',
-      hasMegaMenu: true,
-      subs: [
-        {
-          title: 'General',
-          items: ['Hammers', 'Screwdrivers', 'Pliers', 'Wrenches', 'Tape Measures']
-        },
-        {
-          title: 'Cutting',
-          items: ['Utility Knives', 'Saws', 'Wire Cutters', 'Chisels', 'Scissors']
-        },
-        {
-          title: 'Finishing',
-          items: ['Sandpaper', 'Files', 'Rasps', 'Putty Knives']
-        },
-        {
-          title: 'Sets',
-          items: ['Mechanics Tool Sets', 'Household Tool Sets', 'Socket Sets']
-        }
-      ]
-    },
-    {
-      name: 'Landscaping',
-      href: '/products?category=landscaping',
-      hasMegaMenu: true,
-      subs: [
-        {
-          title: 'Heavy Duty',
-          items: ['Chainsaws', 'Pole Saws', 'Tillers', 'Augers']
-        },
-        {
-          title: 'Maintenance',
-          items: ['Pressure Washers', 'Sweepers', 'Snow Blowers', 'Log Splitters']
-        },
-        {
-          title: 'Outdoor Decor',
-          items: ['Pavers', 'Retaining Walls', 'Edging', 'Stepping Stones']
-        },
-        {
-          title: 'Safety Gear',
-          items: ['Gloves', 'Eye Protection', 'Hearing Protection', 'Boots']
-        }
-      ]
-    },
-    {
-      name: 'Power tool',
-      href: '/products?category=power-tools',
-      hasMegaMenu: true,
-      subs: [
-        {
-          title: 'Power Tools',
-          items: ['Cable Cutting & Crimping', 'Compressors', 'Drills', 'Dust Management', 'Grinders & Polishers']
-        },
-        {
-          title: 'Home Improvement',
-          items: ['Tool Sets', 'Screwdriver Sets', 'Socket & Socket Wrench Sets', 'Combination Wrenches', 'Pliers']
-        },
-        {
-          title: 'Hand Tools',
-          items: ['Drywall Tools', 'Hammers', 'Hand Saws', 'Knives & Blades']
-        },
-        {
-          title: 'Accessories',
-          items: ['Batteries & Chargers', 'Cutting & Grinding', 'Drilling Accessories', 'Fastening Accessories']
-        }
-      ]
-    },
-    {
-      name: 'Woodworking',
-      href: '/products?category=woodworking',
-      hasMegaMenu: true,
-      subs: [
-        {
-          title: 'Cutting',
-          items: ['Table Saws', 'Miter Saws', 'Band Saws', 'Scroll Saws', 'Jigsaws']
-        },
-        {
-          title: 'Shaping',
-          items: ['Routers', 'Planers', 'Jointers', 'Lathes']
-        },
-        {
-          title: 'Sanding',
-          items: ['Belt Sanders', 'Orbital Sanders', 'Disc Sanders', 'Drum Sanders']
-        },
-        {
-          title: 'Assembly',
-          items: ['Clamps', 'Vises', 'Glue & Adhesives', 'Dowels & Biscuits']
-        }
-      ]
-    },
-  ]
+      } catch (err) {
+        console.error('Failed to load categories', err);
+      }
+    };
+    fetchCategories();
+  }, [])
 
   useEffect(() => {
     setMounted(true)
@@ -254,11 +157,11 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
                         <div className="absolute left-full top-0 w-[800px] h-[500px] bg-white shadow-xl border border-gray-100 rounded-md hidden group-hover/item:block p-8 z-50 -ml-[1px]">
                           {/* Using -ml-[1px] to ensure connectivity and cover borders */}
                           <div className="grid grid-cols-2 gap-x-12 gap-y-8 h-full">
-                            {cat.subs?.map((section, sIdx) => (
+                            {cat.subs?.map((section: { title: string; items: string[] }, sIdx: number) => (
                               <div key={sIdx}>
                                 <h3 className="font-bold text-secondary text-base mb-4 border-b border-gray-100 pb-2">{section.title}</h3>
                                 <ul className="space-y-3">
-                                  {section.items.map((item, iIdx) => (
+                                  {section.items.map((item: string, iIdx: number) => (
                                     <li key={iIdx}>
                                       <Link href="#" className="text-gray-500 hover:text-primary transition-colors text-sm">
                                         {item}

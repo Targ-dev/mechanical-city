@@ -5,118 +5,119 @@ dotenv.config({ path: '.env.local' });
 import connectDB from '../lib/db';
 import Product from '../models/Product';
 import Category from '../models/Category';
+import SiteConfig from '../models/SiteConfig';
+
+// Generic high-quality tool image
+const THEME_IMAGE = 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=800&q=80';
 
 const products = [
     {
         name: 'Professional 20V Cordless Drill Driver',
         slug: 'professional-hammer-drill',
         price: 159.99,
-        description: 'Heavy-duty 20V Max cordless drill/driver with brushless motor. Features 2-speed transmission, 1/2-inch metal ratcheting chuck, and LED work light. Includes 2 high-capacity batteries and charger.',
-        image: '/images/products/drill-1.jpg',
-        category: {
-            name: 'Drills',
-            slug: 'drills',
-        },
+        description: 'Heavy-duty 20V Max cordless drill/driver with brushless motor.',
+        image: THEME_IMAGE,
+        category: { name: 'Drills', slug: 'drills' },
     },
     {
         name: 'Compact Impact Driver Kit',
         slug: 'compact-impact-driver',
         price: 129.99,
-        description: 'Ultra-compact and lightweight design allows functionality in tight spaces. High-torque output motor delivers maximum power for heavy-duty fastening applications.',
-        image: '/images/products/drill-2.jpg',
-        category: {
-            name: 'Drills',
-            slug: 'drills',
-        },
+        description: 'Ultra-compact and lightweight design allows functionality in tight spaces.',
+        image: THEME_IMAGE,
+        category: { name: 'Drills', slug: 'drills' },
     },
     {
         name: 'Heavy Duty Hammer Drill',
         slug: 'heavy-duty-hammer-drill',
         price: 199.99,
-        description: 'Powerful hammer drill geared for masonry and concrete drilling. Ergonomic grip and variable speed control for precision work. Built for vital jobsite durability.',
-        image: '/images/products/drill-3.jpg',
-        category: {
-            name: 'Drills',
-            slug: 'drills',
-        },
+        description: 'Powerful hammer drill geared for masonry and concrete drilling.',
+        image: THEME_IMAGE,
+        category: { name: 'Drills', slug: 'drills' },
     },
     {
         name: '7-1/4" Circular Saw',
         slug: 'circular-saw-pro',
         price: 189.99,
-        description: 'High-performance motor delivers 5800 RPM for fast, smooth cutting. Features a heavy-gauge aluminum shoe and bevel capacity of 57 degrees. Ideal for framing and cross-cutting.',
-        image: '/images/products/saw-1.jpg',
-        category: {
-            name: 'Saws',
-            slug: 'saws',
-        },
+        description: 'High-performance motor delivers 5800 RPM for fast, smooth cutting.',
+        image: THEME_IMAGE,
+        category: { name: 'Saws', slug: 'saws' },
     },
     {
         name: 'Cordless Reciprocating Saw',
         slug: 'reciprocating-saw-cordless',
         price: 149.99,
-        description: 'Compact design fits between studs and in other tight spots. Keyless blade clamp for quick and easy blade changes. Patented 4-position blade clamp allows for flush cutting.',
-        image: '/images/products/saw-2.jpg',
-        category: {
-            name: 'Saws',
-            slug: 'saws',
-        },
+        description: 'Compact design fits between studs and in other tight spots.',
+        image: THEME_IMAGE,
+        category: { name: 'Saws', slug: 'saws' },
     },
     {
         name: '10" Sliding Compound Miter Saw',
         slug: 'miter-saw-10-inch',
         price: 349.99,
-        description: 'Precise miter system and machined base fence support for optimization of cutting accuracy. Tall sliding fences support crown molding vertically nested.',
-        image: '/images/products/saw-3.jpg',
-        category: {
-            name: 'Saws',
-            slug: 'saws',
-        },
+        description: 'Precise miter system and machined base fence support.',
+        image: THEME_IMAGE,
+        category: { name: 'Saws', slug: 'saws' },
     },
     {
         name: '4-1/2" Angle Grinder',
         slug: 'angle-grinder-4-inch',
         price: 89.99,
-        description: '11 Amp AC/DC 11,000 RPM motor for fast material removal. Dust Ejection System provides durability by ejecting damaging dust and debris particles.',
-        image: '/images/products/grinder-1.jpg',
-        category: {
-            name: 'Grinders',
-            slug: 'grinders',
-        },
+        description: '11 Amp AC/DC 11,000 RPM motor for fast material removal.',
+        image: THEME_IMAGE,
+        category: { name: 'Grinders', slug: 'grinders' },
     },
     {
         name: 'Variable Speed Die Grinder',
         slug: 'die-grinder-variable',
         price: 119.99,
-        description: 'Brushless motor requires no brush changes. Variable speed paddle switch allows for multiple application usage. Compact gear case.',
-        image: '/images/products/grinder-2.jpg',
-        category: {
-            name: 'Grinders',
-            slug: 'grinders',
-        },
+        description: 'Brushless motor requires no brush changes.',
+        image: THEME_IMAGE,
+        category: { name: 'Grinders', slug: 'grinders' },
     },
     {
         name: '21-Piece Titanium Drill Bit Set',
         slug: 'drill-bit-set-21pc',
         price: 29.99,
-        description: 'Titanium coating for longer life. Patented pilot point tip starts on contact. Ideal for drilling in metal, wood, and plastic.',
-        image: '/images/products/accessory-1.jpg',
-        category: {
-            name: 'Accessories',
-            slug: 'accessories',
-        },
+        description: 'Titanium coating for longer life. Patented pilot point tip starts on contact.',
+        image: THEME_IMAGE,
+        category: { name: 'Accessories', slug: 'accessories' },
     },
     {
         name: 'Contractor Tool Bag',
         slug: 'contractor-tool-bag',
         price: 49.99,
-        description: 'Heavy-duty poly fabric construction. Large interior compartment and multiple pockets for organization. Steel handle with padded grip.',
-        image: '/images/products/accessory-2.jpg',
-        category: {
-            name: 'Accessories',
-            slug: 'accessories',
-        },
+        description: 'Heavy-duty poly fabric construction. Large interior compartment.',
+        image: THEME_IMAGE,
+        category: { name: 'Accessories', slug: 'accessories' },
     },
+];
+
+const banners = [
+    {
+        bannerId: 'hero-1',
+        imageUrl: THEME_IMAGE,
+        subtitle: 'Pro Series Tools',
+        titleHtml: 'Ultimate Power <br />For Every Job',
+        buttonText: 'Shop Drills',
+        buttonLink: '/products?category=drills'
+    },
+    {
+        bannerId: 'hero-2',
+        imageUrl: THEME_IMAGE,
+        subtitle: 'Spring Sale',
+        titleHtml: 'Save 20% On <br />Heavy Machinery',
+        buttonText: 'View Deals',
+        buttonLink: '/products?category=saws'
+    },
+    {
+        bannerId: 'hero-3',
+        imageUrl: THEME_IMAGE,
+        subtitle: 'New Arrivals',
+        titleHtml: 'Next-Gen <br />Cordless Tools',
+        buttonText: 'Discover Now',
+        buttonLink: '/products'
+    }
 ];
 
 async function seed() {
@@ -137,7 +138,8 @@ async function seed() {
                 categoriesMap.set(p.category.slug, {
                     name: p.category.name,
                     slug: p.category.slug,
-                    description: `All ${p.category.name} products`
+                    description: `All ${p.category.name} products`,
+                    image: THEME_IMAGE
                 });
             }
         });
@@ -145,15 +147,22 @@ async function seed() {
         const categories = Array.from(categoriesMap.values());
 
         console.log(`Seeding ${categories.length} categories...`);
-        const createdCategories = await Category.insertMany(categories);
+        await Category.insertMany(categories);
         console.log('Categories seeded');
 
         console.log(`Seeding ${products.length} products...`);
-        // We can just insert products as is since they embed the same structure
-        // But cleaner if we ensure consistency. The current Product model embeds {name, slug}
-        // which matches the seed data.
         await Product.insertMany(products);
         console.log('Products seeded successfully');
+
+        console.log('Updating Site Banners...');
+        let config = await SiteConfig.findOne({ singletonId: 'global' });
+        if (!config) {
+            config = new SiteConfig({ singletonId: 'global', banners: banners });
+        } else {
+            config.banners = banners;
+        }
+        await config.save();
+        console.log('Banners updated successfully');
 
         process.exit(0);
     } catch (error) {

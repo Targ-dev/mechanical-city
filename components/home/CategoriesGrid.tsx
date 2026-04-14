@@ -1,82 +1,26 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
-const categories = [
-    {
-        name: 'Decker Tools',
-        slug: 'decker-tools',
-        image: '/images/category/Decker-Tools.png'
-    },
-    {
-        name: 'Cutting Tools',
-        slug: 'cutting-tools',
-        image: '/images/category/cutting-tools.png'
-    },
-    {
-        name: 'Wrench Tool',
-        slug: 'wrench-tool',
-        image: '/images/category/wrench-tools.png'
-    },
-    {
-        name: 'Power Saw',
-        slug: 'power-saw',
-        image: '/images/category/power-saw.png'
-    },
-    {
-        name: 'Abrasives Tool',
-        slug: 'abrasives-tool',
-        image: '/images/category/Abrasive-tools.png'
-    },
-    {
-        name: 'Hand Drill Tool',
-        slug: 'hand-drill',
-        image: '/images/category/Hand-Drill-Tool.png'
-    },
-    {
-        name: 'Staple Guns',
-        slug: 'staple-guns',
-        image: '/images/category/staple-gun.png'
-    },
-    {
-        name: 'Power Tools',
-        slug: 'power-tools',
-        image: '/images/category/power-tools.png'
-    },
-    {
-        name: 'Hammer Tool',
-        slug: 'hammer-tool',
-        image: '/images/category/hammer-tool.png'
-    },
-    {
-        name: 'Circular Saw',
-        slug: 'circular-saw',
-        image: '/images/category/circular-saw.png'
-    },
-    {
-        name: 'Air Toolset',
-        slug: 'air-toolset',
-        image: '/images/category/air-toolset.png'
-    },
-    {
-        name: 'Blades Sets',
-        slug: 'blades-sets',
-        image: '/images/category/blades-sets.png'
-    },
-    {
-        name: 'Grinder Tools',
-        slug: 'grinder-tools',
-        image: '/images/category/grinder-tools.png'
-    },
-    {
-        name: 'Safety Equipment',
-        slug: 'safety-equipment',
-        image: '/images/category/safety-equipment.png'
-    }
-];
-
 const CategoriesGrid = () => {
+    const [categories, setCategories] = useState<any[]>([]);
+
+    React.useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await fetch('/api/categories');
+                const data = await res.json();
+                if (Array.isArray(data)) {
+                    setCategories(data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch categories");
+            }
+        };
+        fetchCategories();
+    }, []);
+
     const [mobilePage, setMobilePage] = useState(0);
     const touchStartX = React.useRef<number | null>(null);
     const touchEndX = React.useRef<number | null>(null);
@@ -99,7 +43,7 @@ const CategoriesGrid = () => {
         const isLeftSwipe = distance > minSwipeDistance;
         const isRightSwipe = distance < -minSwipeDistance;
 
-        if (isLeftSwipe && mobilePage < totalSteps - 1) {
+        if (isLeftSwipe && mobilePage < maxMobilePage) {
             setMobilePage(prev => prev + 1);
         } else if (isRightSwipe && mobilePage > 0) {
             setMobilePage(prev => prev - 1);
@@ -118,7 +62,13 @@ const CategoriesGrid = () => {
 
     const VISIBLE_COLUMNS = 3;
     // Total steps to move = total columns - visible columns + 1
-    const totalSteps = columns.length - VISIBLE_COLUMNS + 1;
+    const totalSteps = Math.max(columns.length - VISIBLE_COLUMNS + 1, 0);
+    const dotCount = columns.length > 0 ? Math.max(totalSteps, 1) : 0;
+    const maxMobilePage = Math.max(totalSteps - 1, 0);
+
+    useEffect(() => {
+        setMobilePage((prev) => Math.min(prev, maxMobilePage));
+    }, [maxMobilePage]);
 
     return (
         <section className="py-16 bg-white overflow-hidden">
@@ -174,7 +124,7 @@ const CategoriesGrid = () => {
 
                     {/* Pagination Dots */}
                     <div className="flex justify-center mt-8 gap-2">
-                        {[...Array(totalSteps)].map((_, i) => (
+                        {[...Array(dotCount)].map((_, i) => (
                             <button
                                 key={i}
                                 onClick={() => setMobilePage(i)}
