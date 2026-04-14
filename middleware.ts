@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
   }
 
   // Define protected routes
-  const protectedRoutes = ['/cart', '/checkout', '/orders', '/admin']
+  const protectedRoutes = ['/cart', '/checkout', '/orders', '/admin', '/profile']
 
   // Check if current path starts with any protected route
   const isProtected = protectedRoutes.some(route => pathname.startsWith(route))
@@ -40,6 +40,7 @@ export const config = {
     '/cart/:path*',
     '/checkout/:path*',
     '/orders/:path*',
-    '/admin/:path*'
+    '/admin/:path*',
+    '/profile/:path*'
   ],
 }

@@ -307,20 +307,47 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
 
               {/* Icons */}
               <div className="flex items-center gap-4 text-white">
-                {/* User Icon */}
-                <Link href={user ? (user.role === 'admin' ? '/admin' : '/orders') : '/login'} className="hidden sm:block p-1 hover:text-primary transition-colors" title={user ? 'My Account' : 'Login'}>
-                  <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </Link>
-
-                {/* Logout Icon */}
-                {user && (
-                  <button onClick={handleLogout} className="hidden sm:block p-1 hover:text-primary transition-colors text-white" title="Logout">
+                {/* User Account Dropdown (Amazon Style) */}
+                {!user ? (
+                  <Link href="/login" className="hidden sm:block p-1 hover:text-primary transition-colors cursor-pointer" title="Login">
                     <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                  </button>
+                  </Link>
+                ) : (
+                  <div className="hidden sm:flex relative group items-center justify-center p-2 cursor-pointer border border-transparent hover:border-white rounded-sm transition-all duration-200">
+                    <div className="flex flex-col items-start pr-1">
+                       <span className="text-[12px] text-gray-300 leading-[12px]">Hello, {user.name?.split(' ')[0] || 'User'}</span>
+                       <span className="text-[14px] font-bold tracking-tight text-white flex items-center leading-[14px] mt-1">
+                         Account & Lists
+                         <svg className="w-4 h-4 ml-0.5 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                         </svg>
+                       </span>
+                    </div>
+
+                    <div className="absolute right-0 top-[100%] pt-1 w-64 hidden group-hover:block fade-in animate-in duration-200 z-[100] mt-1">
+                      {/* Invisible bridge to prevent hover loss */}
+                      <div className="h-4 w-full bg-transparent absolute -top-4 left-0"></div>
+                      
+                      <div className="bg-white shadow-[0_4px_12px_rgba(0,0,0,0.15)] border border-gray-200 rounded-lg p-5 flex flex-col text-sm text-gray-800 cursor-default">
+                         <div className="font-bold text-lg mb-3 border-b border-gray-100 pb-2 text-black">Your Account</div>
+                         
+                         <div className="flex flex-col gap-1">
+                           {user.role === 'admin' && (
+                              <Link href="/admin" className="py-1.5 hover:text-[#C7511F] hover:underline transition-colors block text-[#0F1111]">Admin Dashboard</Link>
+                           )}
+                           <Link href="/orders" className="py-1.5 hover:text-[#C7511F] hover:underline transition-colors block text-[#0F1111]">Your Orders</Link>
+                           <Link href="/profile" className="py-1.5 hover:text-[#C7511F] hover:underline transition-colors block text-[#0F1111]">Your Profile</Link>
+                           <Link href="/wishlist" className="py-1.5 hover:text-[#C7511F] hover:underline transition-colors block text-[#0F1111]">Your Wishlist</Link>
+                         </div>
+                         
+                         <div className="border-t border-gray-200 mt-3 pt-3">
+                            <button onClick={handleLogout} className="py-1.5 w-full text-left hover:text-[#C7511F] hover:underline transition-colors block text-[#0F1111]">Sign Out</button>
+                         </div>
+                      </div>
+                    </div>
+                  </div>
                 )}
 
                 {/* Cart Icon */}
