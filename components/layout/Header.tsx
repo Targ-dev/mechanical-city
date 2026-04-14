@@ -7,7 +7,7 @@ import { useCartStore } from '@/store/cart.store'
 import { useAuthStore } from '@/store/auth.store'
 import Image from 'next/image'
 
-export default function Header() {
+export default function Header({ contactPhone = '+91 - 987 654 3210', contactEmail = 'support@mechanicalcity.com' }: { contactPhone?: string, contactEmail?: string }) {
   const router = useRouter()
   const totalItems = useCartStore((state) => state.getTotalItems())
   const { user, logout } = useAuthStore()
@@ -301,18 +301,27 @@ export default function Header() {
             <div className="flex items-center gap-6">
               {/* Desktop Contact */}
               <div className="hidden xl:flex flex-col items-end text-right text-white">
-                <div className="font-bold text-sm">+91 - 987 654 3210</div>
-                <div className="text-xs text-gray-400">support@mechanicalcity.com</div>
+                <div className="font-bold text-sm">{contactPhone}</div>
+                <div className="text-xs text-gray-400">{contactEmail}</div>
               </div>
 
               {/* Icons */}
               <div className="flex items-center gap-4 text-white">
                 {/* User Icon */}
-                <Link href={user ? (user.role === 'admin' ? '/admin' : '/orders') : '/login'} className="hidden sm:block p-1 hover:text-primary transition-colors">
+                <Link href={user ? (user.role === 'admin' ? '/admin' : '/orders') : '/login'} className="hidden sm:block p-1 hover:text-primary transition-colors" title={user ? 'My Account' : 'Login'}>
                   <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                 </Link>
+
+                {/* Logout Icon */}
+                {user && (
+                  <button onClick={handleLogout} className="hidden sm:block p-1 hover:text-primary transition-colors text-white" title="Logout">
+                    <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                  </button>
+                )}
 
                 {/* Cart Icon */}
                 <Link href="/cart" className="relative p-1 hover:text-primary transition-colors">
@@ -532,8 +541,8 @@ export default function Header() {
 
           {/* Footer Contact Info */}
           <div className="p-6 border-t border-white/10 text-white">
-            <div className="font-bold text-lg mb-1">+30 (0) 1234 56789</div>
-            <div className="text-gray-400 text-sm">support@example.com</div>
+            <div className="font-bold text-lg mb-1">{contactPhone}</div>
+            <div className="text-gray-400 text-sm">{contactEmail}</div>
           </div>
         </div>
       </div>

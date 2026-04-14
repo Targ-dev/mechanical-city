@@ -37,6 +37,18 @@ export default function AdminLayout({
                     >
                         <span className="font-medium">Categories</span>
                     </Link>
+                    <Link
+                        href="/admin/users"
+                        className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                        <span className="font-medium">Users</span>
+                    </Link>
+                    <Link
+                        href="/admin/settings"
+                        className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                        <span className="font-medium">Settings</span>
+                    </Link>
                 </nav>
             </aside>
 

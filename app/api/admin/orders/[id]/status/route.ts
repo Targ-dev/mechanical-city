@@ -23,7 +23,7 @@ async function verifyAdmin() {
 
 export async function PATCH(
     request: Request,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
         const isAdmin = await verifyAdmin();
@@ -31,9 +31,7 @@ export async function PATCH(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { id } = await params; // Next.js 15+ needs await params or destructure properly. The route param is passed as a Promise in Next.js 15. We'll use await params.id safely if needed, but in recent versions params in route handlers can be awatied. Let's do const resolvedParams = await params; const id = resolvedParams.id;
-        const resolvedParams = await params;
-        const orderId = resolvedParams.id;
+        const { id: orderId } = await params;
 
         const { status } = await request.json();
 
