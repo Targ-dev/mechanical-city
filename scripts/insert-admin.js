@@ -1,7 +1,13 @@
+require('dotenv').config({ path: '.env.local' });
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const MONGODB_URI = "mongodb+srv://mernsachil:mechanicalcity2026@cluster0.y8tsgso.mongodb.net/?appName=Cluster0"
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+    console.error('Please define the MONGODB_URI environment variable inside .env.local');
+    process.exit(1);
+}
 
 async function insertAdmin() {
     try {
