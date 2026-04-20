@@ -1,4 +1,6 @@
 import React from 'react'
+
+export const dynamic = 'force-dynamic';
 import Link from 'next/link'
 import { IOrder } from '@/models/Order'
 import OrderTableClient from './OrderTableClient'
