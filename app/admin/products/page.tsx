@@ -8,27 +8,44 @@ import Pagination from '@/components/admin/Pagination'
 
 export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>([])
+    const [categories, setCategories] = useState<{name: string, slug: string}[]>([])
+    const [selectedCategory, setSelectedCategory] = useState<string>('all')
     const [loading, setLoading] = useState(true)
     const [currentPage, setCurrentPage] = useState(1)
     const itemsPerPage = 10
 
-    const paginatedProducts = products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+    const filteredProducts = selectedCategory === 'all'
+        ? products
+        : products.filter(p => p.category.slug === selectedCategory)
+
+    const paginatedProducts = filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
     useEffect(() => {
-        const fetchProducts = async () => {
+        setCurrentPage(1)
+    }, [selectedCategory])
+
+    useEffect(() => {
+        const fetchInitialData = async () => {
             try {
-                const res = await fetch('/api/products')
-                if (res.ok) {
-                    const data = await res.json()
+                const [productsRes, categoriesRes] = await Promise.all([
+                    fetch('/api/products'),
+                    fetch('/api/categories')
+                ])
+                if (productsRes.ok) {
+                    const data = await productsRes.json()
                     setProducts(data)
                 }
+                if (categoriesRes.ok) {
+                    const data = await categoriesRes.json()
+                    setCategories(data)
+                }
             } catch (error) {
-                console.error('Error fetching products:', error)
+                console.error('Error fetching data:', error)
             } finally {
                 setLoading(false)
             }
         }
-        fetchProducts()
+        fetchInitialData()
     }, [])
 
     const handleDelete = async (id: string) => {
@@ -52,11 +69,23 @@ export default function AdminProductsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <h2 className="text-2xl font-bold text-gray-900">Manage Products</h2>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+                    <h2 className="text-2xl font-bold text-gray-900 whitespace-nowrap">Manage Products</h2>
+                    <select
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                        className="block w-full sm:w-48 px-3 py-2 bg-white border border-gray-300 rounded-md text-sm shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    >
+                        <option value="all">All Categories</option>
+                        {categories.map(c => (
+                            <option key={c.slug} value={c.slug}>{c.name}</option>
+                        ))}
+                    </select>
+                </div>
                 <Link
                     href="/admin/products/new"
-                    className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Add Product
                 </Link>
@@ -104,10 +133,10 @@ export default function AdminProductsPage() {
                     ))}
                 </ul>
             </div>
-            {products.length > itemsPerPage && (
+            {filteredProducts.length > itemsPerPage && (
                 <Pagination
                     currentPage={currentPage}
-                    totalItems={products.length}
+                    totalItems={filteredProducts.length}
                     itemsPerPage={itemsPerPage}
                     onPageChange={setCurrentPage}
                 />
