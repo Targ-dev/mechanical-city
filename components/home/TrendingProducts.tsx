@@ -64,15 +64,15 @@ export default function TrendingProducts() {
                 <div className="text-center mb-10">
                     <h2 className="text-3xl font-bold text-secondary uppercase tracking-wide mb-8">Trending Products</h2>
 
-                    <div className="overflow-x-auto pb-4 no-scrollbar">
-                        <div className="flex justify-start sm:justify-center gap-4 min-w-max px-4">
+                    <div className="pb-6 px-4 sm:px-0">
+                        <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
                             {TABS.map((tab) => (
                                 <button
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
-                                    className={`px-8 py-3 border text-sm font-bold uppercase transition-colors whitespace-nowrap ${activeTab === tab
-                                        ? 'bg-[#FFC400] border-[#FFC400] text-secondary'
-                                        : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                                    className={`px-5 py-2 md:px-8 md:py-3 rounded-full border text-xs md:text-sm font-bold uppercase transition-all whitespace-nowrap ${activeTab === tab
+                                        ? 'bg-[#FFC400] border-[#FFC400] text-secondary shadow-md scale-[1.02]'
+                                        : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-800 hover:border-gray-300'
                                         }`}
                                 >
                                     {tab}
