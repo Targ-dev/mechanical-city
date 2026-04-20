@@ -13,6 +13,7 @@ export default function NewCategoryPage() {
         name: '',
         slug: '',
         description: '',
+        image: '',
     })
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -128,6 +129,47 @@ export default function NewCategoryPage() {
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                             placeholder="Category description..."
                         />
+                    </div>
+
+                    <div>
+                        <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-1">
+                            Category Image
+                        </label>
+                        <div className="flex items-center space-x-4">
+                            {formData.image && (
+                                <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-gray-200">
+                                    <img src={formData.image} alt="Preview" className="h-full w-full object-cover" />
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                id="image"
+                                accept="image/*"
+                                onChange={async (e) => {
+                                    const file = e.target.files?.[0]
+                                    if (!file) return
+
+                                    const uploadFormData = new FormData()
+                                    uploadFormData.append('file', file)
+
+                                    try {
+                                        const res = await fetch('/api/upload', {
+                                            method: 'POST',
+                                            body: uploadFormData
+                                        })
+                                        if (res.ok) {
+                                            const { url } = await res.json()
+                                            setFormData(prev => ({ ...prev, image: url }))
+                                        } else {
+                                            alert('Failed to upload image')
+                                        }
+                                    } catch (err) {
+                                        alert('Error uploading image')
+                                    }
+                                }}
+                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                            />
+                        </div>
                     </div>
 
                     <div className="flex justify-end pt-4">
