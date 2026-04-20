@@ -12,7 +12,8 @@ export default function SettingsClient({ initialConfig }: { initialConfig: any }
         socialWhatsapp: '',
         footerAboutText: '',
         features: [],
-        banners: []
+        banners: [],
+        youtubeShorts: []
     })
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null)
@@ -34,6 +35,43 @@ export default function SettingsClient({ initialConfig }: { initialConfig: any }
         if (!newBanners[index]) newBanners[index] = { bannerId: '', imageUrl: '', subtitle: '', titleHtml: '', buttonText: '', buttonLink: '' }
         newBanners[index][field] = value
         setConfig((prev: any) => ({ ...prev, banners: newBanners }))
+    }
+
+    const handleYoutubeShortChange = (index: number, field: string, value: string) => {
+        const newShorts = [...(config.youtubeShorts || [])]
+        if (!newShorts[index]) newShorts[index] = { id: '', url: '' }
+        newShorts[index][field] = value
+        
+        // Automatically extract ID if the user pastes a URL
+        if (field === 'url' && value) {
+            try {
+                if (value.includes('/shorts/')) {
+                     const idPart = value.split('/shorts/')[1].split('?')[0];
+                     if (idPart) newShorts[index].id = idPart;
+                } else if (value.includes('v=')) {
+                     const urlParams = new URL(value).searchParams;
+                     const v = urlParams.get('v');
+                     if (v) newShorts[index].id = v;
+                } else if (value.includes('youtu.be/')) {
+                     const idPart = value.split('youtu.be/')[1].split('?')[0];
+                     if (idPart) newShorts[index].id = idPart;
+                }
+            } catch (e) {
+                console.error("Failed to parse Youtube ID", e)
+            }
+        }
+
+        setConfig((prev: any) => ({ ...prev, youtubeShorts: newShorts }))
+    }
+
+    const addYoutubeShort = () => {
+        setConfig((prev: any) => ({ ...prev, youtubeShorts: [...(prev.youtubeShorts || []), { id: '', url: '' }] }))
+    }
+
+    const removeYoutubeShort = (index: number) => {
+        const newShorts = [...(config.youtubeShorts || [])]
+        newShorts.splice(index, 1)
+        setConfig((prev: any) => ({ ...prev, youtubeShorts: newShorts }))
     }
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -166,6 +204,33 @@ export default function SettingsClient({ initialConfig }: { initialConfig: any }
                         <div>
                             <label className="block text-xs font-medium text-gray-500 mb-1">Button Link</label>
                             <input type="text" value={banner.buttonLink} onChange={(e) => handleBannerChange(idx, 'buttonLink', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary text-sm" />
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* YouTube Shorts */}
+            <div className="space-y-4">
+                <div className="flex items-center justify-between border-b pb-2">
+                    <h2 className="text-xl font-semibold text-gray-800">YouTube Shorts</h2>
+                    <button type="button" onClick={addYoutubeShort} className="bg-secondary text-white px-4 py-1.5 rounded-md text-sm hover:bg-[#FFC400] hover:text-black transition-colors">
+                        + Add Short
+                    </button>
+                </div>
+                {(config.youtubeShorts || []).map((short: any, idx: number) => (
+                    <div key={idx} className="p-4 bg-gray-50 border border-gray-200 rounded-md grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+                        <div>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">YouTube Video ID (e.g. C1fzwterMSE)</label>
+                            <input type="text" value={short.id} onChange={(e) => handleYoutubeShortChange(idx, 'id', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary text-sm" />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-medium text-gray-500 mb-1">Full URL</label>
+                            <input type="text" value={short.url} onChange={(e) => handleYoutubeShortChange(idx, 'url', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary text-sm" />
+                        </div>
+                        <div className="flex justify-end">
+                            <button type="button" onClick={() => removeYoutubeShort(idx)} className="text-red-500 text-sm font-semibold hover:text-red-700 px-3 py-2 border border-red-200 bg-red-50 rounded-md">
+                                Remove
+                            </button>
                         </div>
                     </div>
                 ))}

@@ -15,6 +15,11 @@ export interface IBanner {
     buttonLink: string;
 }
 
+export interface IYoutubeShort {
+    id: string;
+    url: string;
+}
+
 export interface ISiteConfig extends Document {
     singletonId: string;
     contactEmail: string;
@@ -26,6 +31,7 @@ export interface ISiteConfig extends Document {
     footerAboutText: string;
     features: IFeature[];
     banners: IBanner[];
+    youtubeShorts: IYoutubeShort[];
     createdAt: Date;
     updatedAt: Date;
 }
@@ -57,6 +63,17 @@ const SiteConfigSchema: Schema = new Schema(
         footerAboutText: { type: String, default: 'Excellent service and high-quality power tools! They performed flawlessly and gave me peace of mind throughout my projects. Highly professional.' },
         features: { type: [FeatureSchema], default: [] },
         banners: { type: [BannerSchema], default: [] },
+        youtubeShorts: {
+            type: [{ id: { type: String, required: true }, url: { type: String, required: true } }],
+            default: [
+                { id: 'C1fzwterMSE', url: 'https://youtube.com/shorts/C1fzwterMSE?si=HazUPizBwAV6DpQy' },
+                { id: 'r9lqPCsddBs', url: 'https://youtube.com/shorts/r9lqPCsddBs?si=FULJtwxkmpYbzbcc' },
+                { id: 'QnEM_odw4eI', url: 'https://youtube.com/shorts/QnEM_odw4eI?si=nFF_NSTb7y6srCsB' },
+                { id: 'zq55qotA7nU', url: 'https://youtube.com/shorts/zq55qotA7nU?si=oBTosxpPazutOoJ6' },
+                { id: '8iRoIhmbvtQ', url: 'https://youtube.com/shorts/8iRoIhmbvtQ?si=uqlH9X1lLqGgYNFu' },
+                { id: 'AB4ywaJuQAE', url: 'https://youtube.com/shorts/AB4ywaJuQAE?si=EiPbFEioaU5R5pMr' }
+            ]
+        },
     },
     {
         timestamps: true,

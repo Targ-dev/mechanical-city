@@ -22,7 +22,7 @@ export default async function Footer() {
   
   const currentYear = new Date().getFullYear()
 
-  const youtubeShorts = [
+  const youtubeShorts = config?.youtubeShorts?.length > 0 ? config.youtubeShorts : [
     { id: 'C1fzwterMSE', url: 'https://youtube.com/shorts/C1fzwterMSE?si=HazUPizBwAV6DpQy' },
     { id: 'r9lqPCsddBs', url: 'https://youtube.com/shorts/r9lqPCsddBs?si=FULJtwxkmpYbzbcc' },
     { id: 'QnEM_odw4eI', url: 'https://youtube.com/shorts/QnEM_odw4eI?si=nFF_NSTb7y6srCsB' },
