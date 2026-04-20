@@ -201,6 +201,20 @@ export default function CartPage() {
           </div>
         </div>
       </div>
+
+      {/* MOBILE STICKY BOTTOM CHECKOUT */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] z-40">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <span className="text-[#0F1111] text-[15px]">Subtotal w/ Shipping</span>
+          <span className="font-bold text-[#b12704] text-[19px]">₹{total.toFixed(2)}</span>
+        </div>
+        <Link
+          href="/checkout"
+          className="w-full flex justify-center items-center bg-[#FFD814] px-4 py-3.5 rounded-full font-bold text-[#0F1111] shadow-[0_1px_2px_rgba(0,0,0,0.2)] hover:bg-[#F7CA00] active:bg-[#F0B800] transition-colors"
+        >
+          Proceed to Checkout ({items.length} items)
+        </Link>
+      </div>
     </div>
   )
 }

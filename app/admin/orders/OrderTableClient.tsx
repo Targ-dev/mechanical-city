@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { IOrder } from '@/models/Order'
+import Pagination from '@/components/admin/Pagination'
 
 interface OrderTableClientProps {
     initialOrders: (IOrder & { _id: string })[]
@@ -12,6 +13,27 @@ export default function OrderTableClient({ initialOrders }: OrderTableClientProp
     const [orders, setOrders] = useState(initialOrders)
     const [loadingIds, setLoadingIds] = useState<Record<string, boolean>>({})
     const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null)
+    const [searchQuery, setSearchQuery] = useState('')
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
+
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [searchQuery])
+
+    const filteredOrders = orders.filter(o => {
+        if (!searchQuery) return true;
+        const q = searchQuery.toLowerCase();
+        return (
+            (o.orderId && o.orderId.toLowerCase().includes(q)) ||
+            (o.shippingAddress?.fullName?.toLowerCase().includes(q)) ||
+            (o.shippingAddress?.address?.toLowerCase().includes(q)) ||
+            (o.shippingAddress?.phone?.toLowerCase().includes(q)) ||
+            (o._id.toString().toLowerCase().includes(q))
+        );
+    });
+
+    const paginatedOrders = filteredOrders.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
     const updateStatus = async (orderId: string, newStatus: string, displayId: string) => {
         let confirmMessage = '';
@@ -55,6 +77,15 @@ export default function OrderTableClient({ initialOrders }: OrderTableClientProp
 
     return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div className="p-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+                <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by Payment Code, Order ID, Name, Phone..."
+                    className="w-full md:w-[400px] px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm"
+                />
+            </div>
             {message && (
                 <div className={`px-6 py-3 text-sm font-medium ${message.type === 'success' ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'}`}>
                     {message.text}
@@ -73,14 +104,14 @@ export default function OrderTableClient({ initialOrders }: OrderTableClientProp
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {orders.length === 0 ? (
+                        {filteredOrders.length === 0 ? (
                             <tr>
                                 <td colSpan={6} className="px-6 py-12 text-center text-sm text-gray-500">
-                                    No orders found.
+                                    {searchQuery ? 'No orders match your search.' : 'No orders found.'}
                                 </td>
                             </tr>
                         ) : (
-                            orders.map((order) => (
+                            paginatedOrders.map((order) => (
                                 <tr key={order._id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {order.orderId || `#${order._id.toString().slice(0, 8).toUpperCase()}`}
@@ -89,8 +120,15 @@ export default function OrderTableClient({ initialOrders }: OrderTableClientProp
                                         {new Date(order.createdAt).toLocaleDateString()}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                        {order.shippingAddress?.fullName || 'Guest'}
-                                        <div className="text-xs text-gray-500">₹{order.total.toFixed(2)}</div>
+                                        <div className="font-medium">{order.shippingAddress?.fullName || 'Guest'}</div>
+                                        <div className="text-xs text-gray-500 flex items-center gap-2 mt-0.5">
+                                            <span>₹{order.total.toFixed(2)}</span>
+                                            {order.shippingAddress?.address?.includes('[Payment Code:') && (
+                                                <span className="bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono text-[10px] font-bold uppercase tracking-wider">
+                                                    {order.shippingAddress.address.match(/\[Payment Code:\s*([^\]]+)\]/)?.[1]}
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
@@ -134,6 +172,14 @@ export default function OrderTableClient({ initialOrders }: OrderTableClientProp
                     </tbody>
                 </table>
             </div>
+            {filteredOrders.length > itemsPerPage && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={filteredOrders.length}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                />
+            )}
         </div>
     )
 }

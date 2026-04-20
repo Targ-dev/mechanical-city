@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Product } from '@/types/product'
+import AddToCartButton from '@/components/product/AddToCartButton'
 
 interface TrendingProductCardProps {
     product: Product & {
@@ -79,12 +80,9 @@ export default function TrendingProductCard({ product }: TrendingProductCardProp
                 </div>
 
                 {/* Add to Cart Button */}
-                <button
-                    className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-bold py-3 px-4 rounded transition-colors uppercase mt-auto"
-                    onClick={() => console.log('Add to cart default')} // Placeholder
-                >
-                    Add to cart
-                </button>
+                <div className="mt-auto">
+                    <AddToCartButton product={product} size="small" />
+                </div>
             </div>
         </div>
     )

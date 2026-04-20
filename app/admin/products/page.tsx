@@ -4,10 +4,15 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Product } from '@/types/product'
 import Image from 'next/image'
+import Pagination from '@/components/admin/Pagination'
 
 export default function AdminProductsPage() {
     const [products, setProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
+
+    const paginatedProducts = products.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -59,7 +64,7 @@ export default function AdminProductsPage() {
 
             <div className="overflow-hidden bg-white shadow sm:rounded-md">
                 <ul role="list" className="divide-y divide-gray-200">
-                    {products.map((product) => (
+                    {paginatedProducts.map((product) => (
                         <li key={product.id}>
                             <div className="flex items-center px-4 py-4 sm:px-6">
                                 <div className="flex min-w-0 flex-1 items-center">
@@ -99,6 +104,14 @@ export default function AdminProductsPage() {
                     ))}
                 </ul>
             </div>
+            {products.length > itemsPerPage && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={products.length}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                />
+            )}
         </div>
     )
 }

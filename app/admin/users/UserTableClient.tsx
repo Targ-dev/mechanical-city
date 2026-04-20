@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { IUser } from '@/models/User'
+import Pagination from '@/components/admin/Pagination'
 
 interface UserTableClientProps {
     initialUsers: (IUser & { _id: string })[]
@@ -12,6 +13,10 @@ export default function UserTableClient({ initialUsers, currentAdminId }: UserTa
     const [users, setUsers] = useState(initialUsers)
     const [loadingIds, setLoadingIds] = useState<Record<string, boolean>>({})
     const [message, setMessage] = useState<{ text: string, type: 'success' | 'error' } | null>(null)
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
+
+    const paginatedUsers = users.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
     const updateRole = async (userId: string, newRole: string) => {
         if (!window.confirm(`Are you sure you want to change this user's role to ${newRole}?`)) {
@@ -100,14 +105,14 @@ export default function UserTableClient({ initialUsers, currentAdminId }: UserTa
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {users.length === 0 ? (
+                        {paginatedUsers.length === 0 ? (
                             <tr>
                                 <td colSpan={5} className="px-6 py-12 text-center text-sm text-gray-500">
                                     No users found.
                                 </td>
                             </tr>
                         ) : (
-                            users.map((user) => (
+                            paginatedUsers.map((user) => (
                                 <tr key={user._id} className="hover:bg-gray-50 transition-colors">
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                         {user.name}
@@ -162,6 +167,14 @@ export default function UserTableClient({ initialUsers, currentAdminId }: UserTa
                     </tbody>
                 </table>
             </div>
+            {users.length > itemsPerPage && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalItems={users.length}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={setCurrentPage}
+                />
+            )}
         </div>
     )
 }

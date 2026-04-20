@@ -13,6 +13,8 @@ export default function CheckoutPage() {
   const { items, getSubtotal, clearCart } = useCartStore()
 
   const [mounted, setMounted] = useState(false)
+  const [isPaymentStep, setIsPaymentStep] = useState(false)
+  const [paymentCode, setPaymentCode] = useState('')
 
   // Local state for form
   const [formData, setFormData] = useState({
@@ -87,6 +89,29 @@ export default function CheckoutPage() {
     return isValid
   }
 
+  const handleContinueToPayment = () => {
+    if (items.length === 0) {
+      alert('Your cart is empty!')
+      return
+    }
+
+    if (!validateForm()) {
+      return
+    }
+
+    // Generate a memorable 5-digit code if not already generated
+    if (!paymentCode) {
+      setPaymentCode(Math.floor(10000 + Math.random() * 90000).toString())
+    }
+    
+    setIsPaymentStep(true)
+
+    // Scroll down to the payment section smoothly
+    setTimeout(() => {
+      document.getElementById('payment-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 100)
+  }
+
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // Handle Place Order
@@ -115,7 +140,7 @@ export default function CheckoutPage() {
         shippingAddress: {
           fullName: formData.name,
           phone: formData.phone,
-          address: formData.address,
+          address: formData.address + (paymentCode ? ` [Payment Code: ${paymentCode}]` : ''),
           city: formData.city,
           pincode: formData.pincode
         },
@@ -310,28 +335,59 @@ export default function CheckoutPage() {
             </div>
 
             {/* Payment Section */}
-            <div className="mt-6 border border-gray-100 rounded-xl p-4 bg-gray-50 flex flex-col items-center text-center space-y-3">
-              <h3 className="font-bold text-gray-900">Scan to Pay</h3>
-              <div className="bg-white p-2 rounded-lg border border-gray-200">
-                <div className="relative w-32 h-32 flex items-center justify-center rounded overflow-hidden">
-                  <Image src="/qr-placeholder.png" alt="Payment QR Code" fill className="object-contain" />
+            {isPaymentStep ? (
+              <>
+                <div id="payment-section" className="mt-6 border border-gray-100 rounded-xl p-4 bg-gray-50 flex flex-col items-center text-center space-y-3">
+                  <h3 className="font-bold text-gray-900">Scan to Pay</h3>
+                  <div className="bg-white p-2 rounded-lg border border-gray-200">
+                    <div className="relative w-32 h-32 flex items-center justify-center rounded overflow-hidden">
+                      <Image src="/qr-placeholder.png" alt="Payment QR Code" fill className="object-contain" />
+                    </div>
+                  </div>
+                  <div className="bg-blue-100 text-blue-800 px-5 py-2 rounded-lg font-bold text-xl tracking-widest my-2">
+                    Code: {paymentCode}
+                  </div>
+                  <div className="text-sm text-gray-700 text-left w-full space-y-4 px-1">
+                    <div>
+                      <div>1. Scan the QR code with any UPI app to pay <b>₹{total.toFixed(2)}</b>.</div>
+                      <div className="text-xs text-gray-500 mt-1">ഏതെങ്കിലും UPI ആപ്പ് ഉപയോഗിച്ച് QR കോഡ് സ്കാൻ ചെയ്ത് <b>₹{total.toFixed(2)}</b> അടയ്ക്കുക.</div>
+                    </div>
+                    <div>
+                      <div>2. Take a screenshot of the successful payment.</div>
+                      <div className="text-xs text-gray-500 mt-1">പേയ്‌മെൻ്റ് വിജയകരമായതിൻ്റെ ഒരു സ്ക്രീൻഷോട്ട് എടുക്കുക.</div>
+                    </div>
+                    <div>
+                      <div>3. Send the screenshot along with your order code <b>{paymentCode}</b> to our WhatsApp: <b className="whitespace-nowrap">[YOUR_PHONE_NUMBER_HERE]</b>.</div>
+                      <div className="text-xs text-gray-500 mt-1">ആ സ്ക്രീൻഷോട്ടും ഓർഡർ കോഡും (<b>{paymentCode}</b>) ഞങ്ങളുടെ WhatsApp നമ്പറിലേക്ക് അയക്കുക: <b className="whitespace-nowrap">[YOUR_PHONE_NUMBER_HERE]</b>.</div>
+                    </div>
+                    <div>
+                      <div>4. Click "Place Order" below to complete your order.</div>
+                      <div className="text-xs text-gray-500 mt-1">നിങ്ങളുടെ ഓർഡർ പൂർത്തിയാക്കാൻ താഴെയുള്ള "Place Order" ബട്ടൺ ക്ലിക്ക് ചെയ്യുക.</div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-600 bg-blue-50/50 p-3 rounded-lg w-full border border-blue-100 mt-6 text-left space-y-1.5">
+                    <p><b>Note:</b> If you have any confusion with payment, please contact us on <b className="whitespace-nowrap">[YOUR_PHONE_NUMBER_HERE]</b>.</p>
+                    <p className="text-gray-500">പേയ്‌മെൻ്റുമായി ബന്ധപ്പെട്ട് എന്തെങ്കിലും സംശയങ്ങൾ ഉണ്ടെങ്കിൽ ദയവായി ഈ നമ്പറിൽ ബന്ധപ്പെടുക: <b className="whitespace-nowrap">[YOUR_PHONE_NUMBER_HERE]</b>.</p>
+                  </div>
                 </div>
-              </div>
-              <p className="text-sm text-gray-600">
-                1. Scan the QR code with any UPI app.<br />
-                2. Pay the total amount: <b>₹{total.toFixed(2)}</b><br />
-                3. Send a screenshot of successful payment to <b>[YOUR_PHONE_NUMBER_HERE]</b> (WhatsApp) along with your name.<br />
-                4. Click "Place Order" below.
-              </p>
-            </div>
 
-            <button
-              onClick={handlePlaceOrder}
-              disabled={items.length === 0 || isSubmitting}
-              className={`w-full mt-6 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] ${items.length === 0 || isSubmitting ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}
-            >
-              {isSubmitting ? 'Processing...' : 'Place Order'}
-            </button>
+                <button
+                  onClick={handlePlaceOrder}
+                  disabled={items.length === 0 || isSubmitting}
+                  className={`w-full mt-6 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] ${items.length === 0 || isSubmitting ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}
+                >
+                  {isSubmitting ? 'Processing...' : 'Place Order'}
+                </button>
+              </>
+            ) : (
+                <button
+                  onClick={handleContinueToPayment}
+                  disabled={items.length === 0}
+                  className={`w-full mt-6 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] ${items.length === 0 ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}
+                >
+                  Continue to Payment
+                </button>
+            )}
           </section>
         </div>
       </main>
@@ -342,13 +398,23 @@ export default function CheckoutPage() {
           <span className="text-sm text-gray-500">Total</span>
           <span className="text-lg font-bold text-gray-900">₹{total.toFixed(2)}</span>
         </div>
-        <button
-          onClick={handlePlaceOrder}
-          disabled={items.length === 0 || isSubmitting}
-          className={`w-full text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] ${items.length === 0 || isSubmitting ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}
-        >
-          {isSubmitting ? 'Processing...' : 'Place Order'}
-        </button>
+        {isPaymentStep ? (
+            <button
+              onClick={handlePlaceOrder}
+              disabled={items.length === 0 || isSubmitting}
+              className={`w-full text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] ${items.length === 0 || isSubmitting ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}
+            >
+              {isSubmitting ? 'Processing...' : 'Place Order'}
+            </button>
+        ) : (
+            <button
+              onClick={handleContinueToPayment}
+              disabled={items.length === 0}
+              className={`w-full text-white font-bold py-3 rounded-xl shadow-lg shadow-blue-200 transition-all active:scale-[0.98] ${items.length === 0 ? 'bg-gray-400 cursor-not-allowed shadow-none' : 'bg-blue-600 hover:bg-blue-700'}`}
+            >
+              Continue to Payment
+            </button>
+        )}
       </div>
     </div>
   )

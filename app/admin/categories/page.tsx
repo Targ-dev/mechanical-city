@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import Pagination from '@/components/admin/Pagination'
 
 interface Category {
     _id: string
@@ -14,6 +15,10 @@ interface Category {
 export default function CategoriesPage() {
     const [categories, setCategories] = useState<Category[]>([])
     const [loading, setLoading] = useState(true)
+    const [currentPage, setCurrentPage] = useState(1)
+    const itemsPerPage = 10
+
+    const paginatedCategories = categories.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
     useEffect(() => {
         fetchCategories()
@@ -77,14 +82,14 @@ export default function CategoriesPage() {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
-                            {categories.length === 0 ? (
+                            {paginatedCategories.length === 0 ? (
                                 <tr>
                                     <td colSpan={4} className="px-6 py-8 text-center text-gray-500">
                                         No categories found.
                                     </td>
                                 </tr>
                             ) : (
-                                categories.map((category) => (
+                                paginatedCategories.map((category) => (
                                     <tr key={category._id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 text-sm font-medium text-gray-900">
                                             {category.name}
@@ -115,6 +120,14 @@ export default function CategoriesPage() {
                         </tbody>
                     </table>
                 </div>
+                {categories.length > itemsPerPage && (
+                    <Pagination
+                        currentPage={currentPage}
+                        totalItems={categories.length}
+                        itemsPerPage={itemsPerPage}
+                        onPageChange={setCurrentPage}
+                    />
+                )}
             </div>
         </div>
     )
