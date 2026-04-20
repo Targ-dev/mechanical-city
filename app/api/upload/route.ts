@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
+import { v2 as cloudinary } from 'cloudinary';
 import jwt from 'jsonwebtoken';
 import User from '@/models/User';
 import connectDB from '@/lib/db';
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 async function isAdmin(request: NextRequest) {
     const token = request.cookies.get('auth_token_v2')?.value;
@@ -35,25 +40,21 @@ export async function POST(request: NextRequest) {
         const bytes = await file.arrayBuffer();
         const buffer = Buffer.from(bytes);
 
-        // Create unique filename
-        const filename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`;
-        const uploadDir = join(process.cwd(), 'public', 'uploads');
+        // Upload buffer directly to Cloudinary via stream
+        const result = await new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                { folder: 'mechanical-city' },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            );
+            uploadStream.end(buffer);
+        }) as any;
 
-        // Ensure upload directory exists
-        try {
-            await mkdir(uploadDir, { recursive: true });
-        } catch (err) {
-            // Ignore if exists
-        }
-
-        const path = join(uploadDir, filename);
-        await writeFile(path, buffer);
-
-        const imageUrl = `/uploads/${filename}`;
-
-        return NextResponse.json({ url: imageUrl });
+        return NextResponse.json({ url: result.secure_url });
     } catch (error) {
-        console.error('Error uploading file:', error);
+        console.error('Error uploading file to Cloudinary:', error);
         return NextResponse.json(
             { error: 'Internal Server Error' },
             { status: 500 }
