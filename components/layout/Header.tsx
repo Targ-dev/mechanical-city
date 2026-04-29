@@ -27,7 +27,7 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
     'Screwdriver set'
   ]
 
-  const [categories, setCategories] = useState<{name: string, href: string, hasMegaMenu: boolean, subs?: any[]}[]>([])
+  const [categories, setCategories] = useState<{name: string, slug?: string, href: string, hasMegaMenu: boolean, subs?: {title: string, items: {name: string, slug: string}[]}[]}[]>([])
 
     useEffect(() => {
     // Fetch categories and products dynamically
@@ -167,11 +167,11 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
                       {cat.hasMegaMenu && (
                         <div className={`absolute left-full ${verticalPosition} w-[500px] bg-white shadow-xl border border-gray-100 rounded-md hidden group-hover/item:block p-8 z-50 -ml-[1px]`}>
                           <div className="grid grid-cols-1 gap-x-12 gap-y-8 h-full">
-                            {cat.subs?.map((section, sIdx) => (
+                            {cat.subs?.map((section: any, sIdx: number) => (
                               <div key={sIdx}>
                                 <h3 className="font-bold text-secondary text-base mb-4 border-b border-gray-100 pb-2">{section.title}</h3>
                                 <ul className="grid grid-cols-2 gap-x-4 gap-y-3">
-                                  {section.items.map((item, iIdx) => (
+                                  {section.items.map((item: any, iIdx: number) => (
                                     <li key={iIdx}>
                                       <Link href={`/products/${cat.slug}/${item.slug}`} className="text-gray-500 hover:text-primary transition-colors text-sm font-medium line-clamp-2">
                                         {item.name}
