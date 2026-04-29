@@ -1,6 +1,7 @@
 import React from 'react'
 import connectDB from '@/lib/db'
 import SiteConfig from '@/models/SiteConfig'
+import FadeIn from '@/components/ui/FadeIn'
 
 export default async function Benefits() {
     let config = null;
@@ -40,16 +41,18 @@ export default async function Benefits() {
             <div className="layout-container">
                 <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                     {features.map((feature: any, idx: number) => (
-                        <div key={idx} className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4 group cursor-default">
-                            <span 
-                                className="elementor-icon elementor-animation-grow text-primary [&>svg]:w-7 [&>svg]:h-7 md:[&>svg]:w-10 md:[&>svg]:h-10" 
-                                dangerouslySetInnerHTML={{ __html: feature.iconSvg }} 
-                            />
-                            <div>
-                                <h3 className="font-semibold text-[#1E1E1E] text-sm md:text-base">{feature.title}</h3>
-                                <p className="text-gray-500 text-xs md:text-sm">{feature.description}</p>
+                        <FadeIn key={idx} delay={idx * 0.1} direction="up">
+                            <div className="flex flex-col md:flex-row items-center md:items-start text-center md:text-left gap-2 md:gap-4 group cursor-default h-full">
+                                <span 
+                                    className="elementor-icon elementor-animation-grow text-primary [&>svg]:w-7 [&>svg]:h-7 md:[&>svg]:w-10 md:[&>svg]:h-10" 
+                                    dangerouslySetInnerHTML={{ __html: feature.iconSvg }} 
+                                />
+                                <div>
+                                    <h3 className="font-semibold text-[#1E1E1E] text-sm md:text-base">{feature.title}</h3>
+                                    <p className="text-gray-500 text-xs md:text-sm">{feature.description}</p>
+                                </div>
                             </div>
-                        </div>
+                        </FadeIn>
                     ))}
                 </div>
             </div>

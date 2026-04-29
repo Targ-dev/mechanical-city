@@ -29,18 +29,27 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
 
   const [categories, setCategories] = useState<{name: string, href: string, hasMegaMenu: boolean, subs?: any[]}[]>([])
 
-  useEffect(() => {
-    // Fetch categories dynamically
+    useEffect(() => {
+    // Fetch categories and products dynamically
     const fetchCategories = async () => {
       try {
-        const res = await fetch('/api/categories');
-        const data = await res.json();
-        if (Array.isArray(data)) {
-          setCategories(data.map((c: any) => ({
+        const [catRes, prodRes] = await Promise.all([
+          fetch('/api/categories'),
+          fetch('/api/products')
+        ]);
+        const catData = await catRes.json();
+        const prodData = await prodRes.json();
+        if (Array.isArray(catData)) {
+          setCategories(catData.map((c) => {
+            const catProducts = Array.isArray(prodData) ? prodData.filter(p => p.category?.slug === c.slug).slice(0, 8) : [];
+            return {
              name: c.name,
-             href: `/products?category=${c.slug}`,
-             hasMegaMenu: false // Dynamic subs not modeled in simple MVP Categories yet
-          })));
+             slug: c.slug,
+             href: `/products/${c.slug}`,
+             hasMegaMenu: catProducts.length > 0,
+             subs: catProducts.length > 0 ? [{ title: 'Top Products', items: catProducts.map(p => ({ name: p.name, slug: p.slug })) }] : []
+            }
+          }));
         }
       } catch (err) {
         console.error('Failed to load categories', err);
@@ -124,7 +133,7 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
               {/* Page Overlay Backdrop */}
               <div className="fixed inset-0 bg-black/40 z-[-1] hidden group-hover:block transition-opacity duration-300 pointer-events-none" aria-hidden="true" />
 
-              <button className="flex items-center gap-2 bg-primary text-secondary px-6 py-2.5 rounded-md font-bold transition-colors relative z-20 cursor-pointer">
+                            <Link href="/products" className="flex items-center gap-2 bg-primary text-secondary px-6 py-2.5 rounded-md font-bold transition-colors relative z-20 cursor-pointer">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
                 </svg>
@@ -132,39 +141,40 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
                 <svg className="w-4 h-4 ml-2 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
-              </button>
+              </Link>
 
               {/* Level 1: Main Dropdown */}
               <div className="absolute top-full left-0 w-64 hidden group-hover:block animate-in fade-in zoom-in-95 duration-100 z-50">
                 <div className="bg-white shadow-xl border border-gray-100 overflow-visible relative rounded-md">
-                  {categories.map((cat, idx) => (
-                    <div key={idx} className="group/item static">
+                  {categories.map((cat, idx) => {
+                    const isBottomHalf = idx >= categories.length / 2;
+                    const verticalPosition = isBottomHalf ? 'bottom-0' : 'top-0';
+                    return (
+                    <div key={idx} className="group/item relative">
                       <Link
                         href={cat.href}
-                        // Hover style: Left Yellow Border, Gray Background, No Text Color Change
-                        // Added: border-b for dividers, conditional arrow
                         className={`flex items-center justify-between px-5 py-3.5 text-gray-700 hover:bg-gray-50 border-l-4 border-l-transparent hover:border-l-primary transition-colors font-medium ${idx !== categories.length - 1 ? 'border-b border-b-gray-200' : ''}`}
                       >
                         {cat.name}
-                        {/* Arrow now shown for all since all have submenus */}
-                        <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
+                        {cat.hasMegaMenu && (
+                          <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        )}
                       </Link>
 
                       {/* Level 2: Mega Menu Panel */}
                       {cat.hasMegaMenu && (
-                        <div className="absolute left-full top-0 w-[800px] h-[500px] bg-white shadow-xl border border-gray-100 rounded-md hidden group-hover/item:block p-8 z-50 -ml-[1px]">
-                          {/* Using -ml-[1px] to ensure connectivity and cover borders */}
-                          <div className="grid grid-cols-2 gap-x-12 gap-y-8 h-full">
-                            {cat.subs?.map((section: { title: string; items: string[] }, sIdx: number) => (
+                        <div className={`absolute left-full ${verticalPosition} w-[500px] bg-white shadow-xl border border-gray-100 rounded-md hidden group-hover/item:block p-8 z-50 -ml-[1px]`}>
+                          <div className="grid grid-cols-1 gap-x-12 gap-y-8 h-full">
+                            {cat.subs?.map((section, sIdx) => (
                               <div key={sIdx}>
                                 <h3 className="font-bold text-secondary text-base mb-4 border-b border-gray-100 pb-2">{section.title}</h3>
-                                <ul className="space-y-3">
-                                  {section.items.map((item: string, iIdx: number) => (
+                                <ul className="grid grid-cols-2 gap-x-4 gap-y-3">
+                                  {section.items.map((item, iIdx) => (
                                     <li key={iIdx}>
-                                      <Link href="#" className="text-gray-500 hover:text-primary transition-colors text-sm">
-                                        {item}
+                                      <Link href={`/products/${cat.slug}/${item.slug}`} className="text-gray-500 hover:text-primary transition-colors text-sm font-medium line-clamp-2">
+                                        {item.name}
                                       </Link>
                                     </li>
                                   ))}
@@ -175,7 +185,7 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
                         </div>
                       )}
                     </div>
-                  ))}
+                  )})}
                 </div>
               </div>
             </div>
@@ -242,7 +252,7 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
                            )}
                            <Link href="/orders" className="py-1.5 hover:text-[#C7511F] hover:underline transition-colors block text-[#0F1111]">Your Orders</Link>
                            <Link href="/profile" className="py-1.5 hover:text-[#C7511F] hover:underline transition-colors block text-[#0F1111]">Your Profile</Link>
-                           <Link href="/wishlist" className="py-1.5 hover:text-[#C7511F] hover:underline transition-colors block text-[#0F1111]">Your Wishlist</Link>
+                           
                          </div>
                          
                          <div className="border-t border-gray-200 mt-3 pt-3">
@@ -316,24 +326,14 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
               </Link>
-              <Link href="/products" className="hover:text-primary transition-colors">Elements</Link>
+              
               <Link href="/products" className="hover:text-primary transition-colors">Shop</Link>
-              <Link href="/products" className="hover:text-primary transition-colors">Collections</Link>
+              
               <Link href="/about" className="hover:text-primary transition-colors">About us</Link>
               <Link href="/news" className="hover:text-primary transition-colors">News</Link>
               <Link href="/contact" className="hover:text-primary transition-colors">Contact us</Link>
-              <Link href="/wishlist" className="flex items-center gap-1 hover:text-primary transition-colors">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                </svg>
-                Wishlist
-              </Link>
-              <Link href="/compare" className="flex items-center gap-1 hover:text-primary transition-colors">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-                Compare
-              </Link>
+              
+              
             </div>
 
             {/* Right Links */}
@@ -418,9 +418,9 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
             {activeMobileTab === 'menu' ? (
               <nav className="flex flex-col space-y-4">
                 <Link href="/" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Home</Link>
-                <Link href="/products" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Elements</Link>
+                
                 <Link href="/products" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Shop</Link>
-                <Link href="/products" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Collections</Link>
+                
                 <Link href="/about" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>About Us</Link>
                 <Link href="/news" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>News</Link>
                 <Link href="/contact" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Contact Us</Link>
@@ -434,14 +434,8 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
                   </>
                 ) : (
                   <>
-                    <Link href="/wishlist" className="flex items-center gap-2 text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
-                      Wishlist
-                    </Link>
-                    <Link href="/compare" className="flex items-center gap-2 text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                      Compare
-                    </Link>
+                    
+                    
                     <div className="pt-2 flex flex-col gap-2">
                       <Link href="/login" className="text-white hover:text-primary font-bold uppercase text-sm" onClick={() => setIsMenuOpen(false)}>Login</Link>
                       <Link href="/register" className="text-white hover:text-primary font-bold uppercase text-sm" onClick={() => setIsMenuOpen(false)}>Register</Link>

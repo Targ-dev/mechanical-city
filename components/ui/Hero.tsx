@@ -1,4 +1,5 @@
 import React from 'react'
+import FadeIn from '@/components/ui/FadeIn'
 
 interface HeroProps {
     title: string
@@ -22,20 +23,22 @@ export default function Hero({ title, subtitle, backgroundImage }: HeroProps) {
 
             {/* Content */}
             <div className="relative z-20 max-w-4xl mx-auto px-4 text-center">
-                <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight drop-shadow-sm">
-                    {title}
-                </h1>
-                <p className="text-lg md:text-2xl text-gray-200 max-w-2xl mx-auto font-medium drop-shadow-sm">
-                    {subtitle}
-                </p>
-                <div className="mt-8">
-                    <a
-                        href="#products"
-                        className="inline-block bg-secondary text-white font-bold py-3 px-8 rounded-full hover:bg-secondary/80 transition-colors transform hover:scale-105 duration-200"
-                    >
-                        Shop Now
-                    </a>
-                </div>
+                <FadeIn direction="up" delay={0.2}>
+                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 tracking-tight drop-shadow-sm">
+                        {title}
+                    </h1>
+                    <p className="text-lg md:text-2xl text-gray-200 max-w-2xl mx-auto font-medium drop-shadow-sm">
+                        {subtitle}
+                    </p>
+                    <div className="mt-8">
+                        <a
+                            href="#products"
+                            className="inline-block bg-secondary text-white font-bold py-3 px-8 rounded-full hover:bg-secondary/80 transition-colors transform hover:scale-105 duration-200"
+                        >
+                            Shop Now
+                        </a>
+                    </div>
+                </FadeIn>
             </div>
         </section>
     )

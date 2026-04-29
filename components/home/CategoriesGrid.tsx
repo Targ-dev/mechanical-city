@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import FadeIn from '@/components/ui/FadeIn';
 
 const CategoriesGrid = () => {
     const [categories, setCategories] = useState<any[]>([]);
@@ -73,15 +74,17 @@ const CategoriesGrid = () => {
     return (
         <section className="py-16 bg-white overflow-hidden">
             <div className="layout-container">
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-secondary uppercase tracking-wide mb-4">
-                        Shop By Categories
-                    </h2>
-                    <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
-                    <p className="text-muted text-sm max-w-lg mx-auto">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                    </p>
-                </div>
+                <FadeIn direction="up">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-secondary uppercase tracking-wide mb-4">
+                            Shop By Categories
+                        </h2>
+                        <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
+                        <p className="text-muted text-sm max-w-lg mx-auto">
+                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        </p>
+                    </div>
+                </FadeIn>
 
                 {/* Mobile View Slider */}
                 <div
@@ -97,25 +100,26 @@ const CategoriesGrid = () => {
                         {columns.map((column, colIndex) => (
                             <div key={colIndex} className="w-1/3 flex-shrink-0 px-1.5">
                                 <div className="flex flex-col gap-3">
-                                    {column.map((category) => (
-                                        <Link
-                                            key={category.slug}
-                                            href={`/products?category=${category.slug}`}
-                                            className="group"
-                                        >
-                                            <div className="bg-[#F8F9FA] rounded-xl p-4 md:p-6 flex flex-col items-center justify-center h-full min-h-[140px] border border-transparent hover:border-primary/20 transition-all">
-                                                <div className="mb-3 w-12 h-12 flex items-center justify-center">
-                                                    <img
-                                                        src={category.image}
-                                                        alt={category.name}
-                                                        className="w-full h-full object-contain"
-                                                    />
+                                    {column.map((category, catIndex) => (
+                                        <FadeIn key={category.slug} delay={catIndex * 0.1 + colIndex * 0.05} direction="up" fullWidth>
+                                            <Link
+                                                href={`/products?category=${category.slug}`}
+                                                className="group"
+                                            >
+                                                <div className="bg-[#F8F9FA] rounded-xl p-4 md:p-6 flex flex-col items-center justify-center h-full min-h-[140px] border border-transparent hover:border-primary/20 transition-all">
+                                                    <div className="mb-3 w-12 h-12 flex items-center justify-center">
+                                                        <img
+                                                            src={category.image}
+                                                            alt={category.name}
+                                                            className="w-full h-full object-contain"
+                                                        />
+                                                    </div>
+                                                    <h3 className="text-[10px] font-bold text-secondary text-center uppercase tracking-tighter leading-tight">
+                                                        {category.name}
+                                                    </h3>
                                                 </div>
-                                                <h3 className="text-[10px] font-bold text-secondary text-center uppercase tracking-tighter leading-tight">
-                                                    {category.name}
-                                                </h3>
-                                            </div>
-                                        </Link>
+                                            </Link>
+                                        </FadeIn>
                                     ))}
                                 </div>
                             </div>
@@ -138,27 +142,28 @@ const CategoriesGrid = () => {
 
                 {/* Desktop Grid */}
                 <div className="hidden lg:grid grid-cols-7 gap-6">
-                    {categories.map((category) => (
-                        <Link
-                            key={category.slug}
-                            href={`/products?category=${category.slug}`}
-                            className="group"
-                        >
-                            <div className="bg-[#F8F9FA] rounded-xl p-8 flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:bg-white hover:-translate-y-1 border border-transparent hover:border-primary/20 h-full min-h-[180px]">
-                                <div className="mb-4 transition-transform duration-300 group-hover:scale-110 flex items-center justify-center">
-                                    <div className="w-16 h-16 flex items-center justify-center relative">
-                                        <img
-                                            src={category.image}
-                                            alt={category.name}
-                                            className="w-full h-full object-contain"
-                                        />
+                    {categories.map((category, idx) => (
+                        <FadeIn key={category.slug} delay={idx * 0.05} direction="up" fullWidth>
+                            <Link
+                                href={`/products?category=${category.slug}`}
+                                className="group"
+                            >
+                                <div className="bg-[#F8F9FA] rounded-xl p-8 flex flex-col items-center justify-center transition-all duration-300 hover:shadow-xl hover:bg-white hover:-translate-y-1 border border-transparent hover:border-primary/20 h-full min-h-[180px]">
+                                    <div className="mb-4 transition-transform duration-300 group-hover:scale-110 flex items-center justify-center">
+                                        <div className="w-16 h-16 flex items-center justify-center relative">
+                                            <img
+                                                src={category.image}
+                                                alt={category.name}
+                                                className="w-full h-full object-contain"
+                                            />
+                                        </div>
                                     </div>
+                                    <h3 className="text-xs md:text-sm font-bold text-secondary text-center group-hover:text-primary transition-colors uppercase tracking-tight">
+                                        {category.name}
+                                    </h3>
                                 </div>
-                                <h3 className="text-xs md:text-sm font-bold text-secondary text-center group-hover:text-primary transition-colors uppercase tracking-tight">
-                                    {category.name}
-                                </h3>
-                            </div>
-                        </Link>
+                            </Link>
+                        </FadeIn>
                     ))}
                 </div>
             </div>

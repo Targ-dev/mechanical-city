@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import TrendingProductCard from './TrendingProductCard'
+import FadeIn from '@/components/ui/FadeIn'
 
 export default function TrendingProducts() {
     const [products, setProducts] = useState<any[]>([])
@@ -61,26 +62,28 @@ export default function TrendingProducts() {
         <section className="py-8 bg-gray-50/50">
             <div className="layout-container">
                 {/* Header */}
-                <div className="text-center mb-10">
-                    <h2 className="text-3xl font-bold text-secondary uppercase tracking-wide mb-8">Trending Products</h2>
+                <FadeIn direction="up">
+                    <div className="text-center mb-10">
+                        <h2 className="text-3xl font-bold text-secondary uppercase tracking-wide mb-8">Trending Products</h2>
 
-                    <div className="pb-6 px-4 sm:px-0">
-                        <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
-                            {TABS.map((tab) => (
-                                <button
-                                    key={tab}
-                                    onClick={() => setActiveTab(tab)}
-                                    className={`px-5 py-2 md:px-8 md:py-3 rounded-full border text-xs md:text-sm font-bold uppercase transition-all whitespace-nowrap ${activeTab === tab
-                                        ? 'bg-[#FFC400] border-[#FFC400] text-secondary shadow-md scale-[1.02]'
-                                        : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-800 hover:border-gray-300'
-                                        }`}
-                                >
-                                    {tab}
-                                </button>
-                            ))}
+                        <div className="pb-6 px-4 sm:px-0">
+                            <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
+                                {TABS.map((tab) => (
+                                    <button
+                                        key={tab}
+                                        onClick={() => setActiveTab(tab)}
+                                        className={`px-5 py-2 md:px-8 md:py-3 rounded-full border text-xs md:text-sm font-bold uppercase transition-all whitespace-nowrap ${activeTab === tab
+                                            ? 'bg-[#FFC400] border-[#FFC400] text-secondary shadow-md scale-[1.02]'
+                                            : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-800 hover:border-gray-300'
+                                            }`}
+                                    >
+                                        {tab}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                     </div>
-                </div>
+                </FadeIn>
 
                 {/* Mobile View (Slider) */}
                 <div className="relative block lg:hidden group">
@@ -92,8 +95,10 @@ export default function TrendingProducts() {
                             {totalMobilePages > 0 ? [...Array(totalMobilePages)].map((_, pageIndex) => (
                                 <div key={pageIndex} className="w-full flex-shrink-0 px-1">
                                     <div className="grid grid-cols-2 gap-4">
-                                        {filteredProducts.slice(pageIndex * ITEMS_PER_PAGE_MOBILE, (pageIndex + 1) * ITEMS_PER_PAGE_MOBILE).map((product: any) => (
-                                            <TrendingProductCard key={product.id} product={product} />
+                                        {filteredProducts.slice(pageIndex * ITEMS_PER_PAGE_MOBILE, (pageIndex + 1) * ITEMS_PER_PAGE_MOBILE).map((product: any, idx: number) => (
+                                            <FadeIn key={product.id} delay={idx * 0.1} direction="up" fullWidth>
+                                                <TrendingProductCard product={product} />
+                                            </FadeIn>
                                         ))}
                                     </div>
                                 </div>
@@ -135,8 +140,10 @@ export default function TrendingProducts() {
 
                 {/* Desktop View (Grid) */}
                 <div className="hidden lg:grid lg:grid-cols-5 gap-6">
-                    {desktopProducts.length > 0 ? desktopProducts.map((product: any) => (
-                        <TrendingProductCard key={product.id} product={product} />
+                    {desktopProducts.length > 0 ? desktopProducts.map((product: any, idx: number) => (
+                        <FadeIn key={product.id} delay={idx * 0.05} direction="up" fullWidth>
+                            <TrendingProductCard product={product} />
+                        </FadeIn>
                     )) : (
                         <div className="col-span-5 text-center py-8 text-gray-500">No products found for this category.</div>
                     )}

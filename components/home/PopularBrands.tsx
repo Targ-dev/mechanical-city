@@ -1,4 +1,5 @@
 import React from 'react';
+import FadeIn from '@/components/ui/FadeIn';
 
 const brands = [
     '/images/brands/1.jpg',
@@ -37,35 +38,41 @@ const PopularBrands = () => {
     return (
         <section className="py-16 bg-white overflow-hidden">
             <div className="layout-container">
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-secondary uppercase tracking-wide mb-4">
-                        Popular Brands
-                    </h2>
-                    <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
-                    <p className="text-muted text-sm max-w-lg mx-auto">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                    </p>
-                </div>
+                <FadeIn direction="up">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-secondary uppercase tracking-wide mb-4">
+                            Popular Brands
+                        </h2>
+                        <div className="w-20 h-1 bg-primary mx-auto mb-6"></div>
+                        <p className="text-muted text-sm max-w-lg mx-auto">
+                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+                        </p>
+                    </div>
+                </FadeIn>
             </div>
 
             <div className="flex flex-col gap-6 md:gap-8 overflow-hidden">
                 {/* Top Row - Moving Left */}
-                <div className="relative flex">
-                    <div className="flex animate-scroll-left whitespace-nowrap w-max">
-                        {brandsRow1.map((src, idx) => (
-                            <BrandCard key={`r1-${idx}`} src={src} />
-                        ))}
+                <FadeIn direction="left" delay={0.1}>
+                    <div className="relative flex">
+                        <div className="flex animate-scroll-left whitespace-nowrap w-max">
+                            {brandsRow1.map((src, idx) => (
+                                <BrandCard key={`r1-${idx}`} src={src} />
+                            ))}
+                        </div>
                     </div>
-                </div>
+                </FadeIn>
 
                 {/* Bottom Row - Moving Right */}
-                <div className="relative flex">
-                    <div className="flex animate-scroll-right whitespace-nowrap w-max">
-                        {brandsRow2.map((src, idx) => (
-                            <BrandCard key={`r2-${idx}`} src={src} />
-                        ))}
+                <FadeIn direction="right" delay={0.2}>
+                    <div className="relative flex">
+                        <div className="flex animate-scroll-right whitespace-nowrap w-max">
+                            {brandsRow2.map((src, idx) => (
+                                <BrandCard key={`r2-${idx}`} src={src} />
+                            ))}
+                        </div>
                     </div>
-                </div>
+                </FadeIn>
             </div>
         </section>
     );
