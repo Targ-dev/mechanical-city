@@ -18,15 +18,17 @@ async function isAdmin(request: NextRequest) {
   }
 }
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     if (!(await isAdmin(request))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await context.params;
+
     await connectDB();
     const body = await request.json();
-    const video = await Video.findByIdAndUpdate(params.id, body, { new: true });
+    const video = await Video.findByIdAndUpdate(id, body, { new: true });
     
     if (!video) {
       return NextResponse.json({ error: 'Video not found' }, { status: 404 });
@@ -38,14 +40,16 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     if (!(await isAdmin(request))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { id } = await context.params;
+
     await connectDB();
-    const video = await Video.findByIdAndDelete(params.id);
+    const video = await Video.findByIdAndDelete(id);
     
     if (!video) {
       return NextResponse.json({ error: 'Video not found' }, { status: 404 });
