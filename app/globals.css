@@ -27,6 +27,9 @@
   --color-footer: var(--color-secondary);
   --color-cta: var(--color-primary);
 
+  /* Fonts */
+  --font-sans: var(--font-geist-sans), sans-serif;
+
   /* Animations */
   --animate-scroll-left: scroll-left 40s linear infinite;
   --animate-scroll-right: scroll-right 40s linear infinite;

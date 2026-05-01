@@ -2,6 +2,7 @@ import connectDB from './db';
 import Product from '@/models/Product';
 import Category from '@/models/Category';
 import Order from '@/models/Order';
+import Video from '@/models/Video';
 import { cache } from 'react';
 
 export const getProducts = cache(async (categorySlug?: string) => {
@@ -68,4 +69,15 @@ export const getOrderById = cache(async (id: string) => {
     } catch (error) {
         return null;
     }
+});
+
+export const getVideos = cache(async (type?: 'video' | 'short') => {
+    await connectDB();
+    const query = type ? { type, isActive: true } : { isActive: true };
+    const videos = await Video.find(query).sort({ createdAt: -1 }).lean();
+    return videos.map(v => ({
+        ...v,
+        id: v._id.toString(),
+        _id: v._id.toString()
+    }));
 });

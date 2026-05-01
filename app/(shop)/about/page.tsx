@@ -23,7 +23,7 @@ export default function AboutPage() {
             </section>
 
             {/* Innovation and Simplicity Section */}
-            <section className="bg-background py-20 lg:py-32">
+            <section className="bg-background py-10 lg:py-20">
                 <div className="layout-container">
                     <div className="grid grid-cols-1 lg:grid-cols-[1fr,1.5fr] gap-16 lg:gap-24 items-start">
                         {/* Left: Text Content */}

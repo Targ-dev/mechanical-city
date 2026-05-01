@@ -330,7 +330,8 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
               <Link href="/products" className="hover:text-primary transition-colors">Shop</Link>
               
               <Link href="/about" className="hover:text-primary transition-colors">About us</Link>
-              <Link href="/news" className="hover:text-primary transition-colors">News</Link>
+              <Link href="/blog" className="hover:text-primary transition-colors">Blog</Link>
+              <Link href="/videos" className="hover:text-primary transition-colors">Videos</Link>
               <Link href="/contact" className="hover:text-primary transition-colors">Contact us</Link>
               
               
@@ -422,7 +423,8 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
                 <Link href="/products" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Shop</Link>
                 
                 <Link href="/about" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>About Us</Link>
-                <Link href="/news" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>News</Link>
+                <Link href="/blog" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Blog</Link>
+                <Link href="/videos" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Videos</Link>
                 <Link href="/contact" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Contact Us</Link>
 
                 {user ? (

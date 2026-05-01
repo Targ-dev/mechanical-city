@@ -44,6 +44,12 @@ export default function AdminLayout({
                         <span className="font-medium">Users</span>
                     </Link>
                     <Link
+                        href="/admin/videos"
+                        className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100 transition-colors"
+                    >
+                        <span className="font-medium">Videos</span>
+                    </Link>
+                    <Link
                         href="/admin/settings"
                         className="flex items-center px-6 py-3 text-gray-700 hover:bg-gray-100 transition-colors"
                     >
