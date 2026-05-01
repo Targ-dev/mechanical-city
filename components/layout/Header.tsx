@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import React, { useEffect, useState, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 import { useCartStore } from '@/store/cart.store'
 import { useAuthStore } from '@/store/auth.store'
 import Image from 'next/image'
@@ -17,6 +17,7 @@ export default function Header({
   initialCategories?: any[]
 }) {
   const router = useRouter()
+  const pathname = usePathname()
   const totalItems = useCartStore((state) => state.getTotalItems())
   const { user, logout } = useAuthStore()
   const [mounted, setMounted] = useState(false)
@@ -303,19 +304,19 @@ export default function Header({
         <div className="layout-container">
           <div className="flex items-center justify-between h-12 text-[14px] font-medium text-gray-600">
             {/* Left Links */}
-            <div className="flex items-center gap-7">
-              <Link href="/" className="flex items-center hover:text-primary transition-colors border-b-2 border-primary h-12 text-primary">
+            <div className="flex items-center gap-7 h-full">
+              <Link href="/" className={`flex items-center h-12 border-b-2 transition-colors ${pathname === '/' ? 'text-primary border-primary' : 'text-gray-600 border-transparent hover:text-primary'}`}>
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
               </Link>
               
-              <Link href="/products" className="hover:text-primary transition-colors">Shop</Link>
+              <Link href="/products" className={`flex items-center h-12 border-b-2 transition-colors ${pathname.startsWith('/products') ? 'text-primary border-primary' : 'text-gray-600 border-transparent hover:text-primary'}`}>Shop</Link>
               
-              <Link href="/about" className="hover:text-primary transition-colors">About us</Link>
-              <Link href="/blog" className="hover:text-primary transition-colors">Blog</Link>
-              <Link href="/videos" className="hover:text-primary transition-colors">Videos</Link>
-              <Link href="/contact" className="hover:text-primary transition-colors">Contact us</Link>
+              <Link href="/about" className={`flex items-center h-12 border-b-2 transition-colors ${pathname.startsWith('/about') ? 'text-primary border-primary' : 'text-gray-600 border-transparent hover:text-primary'}`}>About us</Link>
+              <Link href="/blog" className={`flex items-center h-12 border-b-2 transition-colors ${pathname.startsWith('/blog') ? 'text-primary border-primary' : 'text-gray-600 border-transparent hover:text-primary'}`}>Blog</Link>
+              <Link href="/videos" className={`flex items-center h-12 border-b-2 transition-colors ${pathname.startsWith('/videos') ? 'text-primary border-primary' : 'text-gray-600 border-transparent hover:text-primary'}`}>Videos</Link>
+              <Link href="/contact" className={`flex items-center h-12 border-b-2 transition-colors ${pathname.startsWith('/contact') ? 'text-primary border-primary' : 'text-gray-600 border-transparent hover:text-primary'}`}>Contact us</Link>
               
               
             </div>
@@ -401,14 +402,14 @@ export default function Header({
           <div className="flex-1 overflow-y-auto p-6">
             {activeMobileTab === 'menu' ? (
               <nav className="flex flex-col space-y-4">
-                <Link href="/" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Home</Link>
+                <Link href="/" className={`font-bold uppercase text-sm border-b pb-3 transition-colors block ${pathname === '/' ? 'text-primary border-primary' : 'text-white border-white/10 hover:text-primary'}`} onClick={() => setIsMenuOpen(false)}>Home</Link>
                 
-                <Link href="/products" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Shop</Link>
+                <Link href="/products" className={`font-bold uppercase text-sm border-b pb-3 transition-colors block ${pathname.startsWith('/products') ? 'text-primary border-primary' : 'text-white border-white/10 hover:text-primary'}`} onClick={() => setIsMenuOpen(false)}>Shop</Link>
                 
-                <Link href="/about" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>About Us</Link>
-                <Link href="/blog" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Blog</Link>
-                <Link href="/videos" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Videos</Link>
-                <Link href="/contact" className="text-white hover:text-primary font-bold uppercase text-sm border-b border-white/10 pb-3" onClick={() => setIsMenuOpen(false)}>Contact Us</Link>
+                <Link href="/about" className={`font-bold uppercase text-sm border-b pb-3 transition-colors block ${pathname.startsWith('/about') ? 'text-primary border-primary' : 'text-white border-white/10 hover:text-primary'}`} onClick={() => setIsMenuOpen(false)}>About Us</Link>
+                <Link href="/blog" className={`font-bold uppercase text-sm border-b pb-3 transition-colors block ${pathname.startsWith('/blog') ? 'text-primary border-primary' : 'text-white border-white/10 hover:text-primary'}`} onClick={() => setIsMenuOpen(false)}>Blog</Link>
+                <Link href="/videos" className={`font-bold uppercase text-sm border-b pb-3 transition-colors block ${pathname.startsWith('/videos') ? 'text-primary border-primary' : 'text-white border-white/10 hover:text-primary'}`} onClick={() => setIsMenuOpen(false)}>Videos</Link>
+                <Link href="/contact" className={`font-bold uppercase text-sm border-b pb-3 transition-colors block ${pathname.startsWith('/contact') ? 'text-primary border-primary' : 'text-white border-white/10 hover:text-primary'}`} onClick={() => setIsMenuOpen(false)}>Contact Us</Link>
 
                 {user ? (
                   <>
