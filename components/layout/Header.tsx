@@ -7,7 +7,15 @@ import { useCartStore } from '@/store/cart.store'
 import { useAuthStore } from '@/store/auth.store'
 import Image from 'next/image'
 
-export default function Header({ contactPhone = '+91 - 987 654 3210', contactEmail = 'support@mechanicalcity.com' }: { contactPhone?: string, contactEmail?: string }) {
+export default function Header({ 
+  contactPhone = '+91 - 987 654 3210', 
+  contactEmail = 'support@mechanicalcity.com',
+  initialCategories = []
+}: { 
+  contactPhone?: string, 
+  contactEmail?: string,
+  initialCategories?: any[]
+}) {
   const router = useRouter()
   const totalItems = useCartStore((state) => state.getTotalItems())
   const { user, logout } = useAuthStore()
@@ -27,36 +35,11 @@ export default function Header({ contactPhone = '+91 - 987 654 3210', contactEma
     'Screwdriver set'
   ]
 
-  const [categories, setCategories] = useState<{name: string, slug?: string, href: string, hasMegaMenu: boolean, subs?: {title: string, items: {name: string, slug: string}[]}[]}[]>([])
+  const [categories, setCategories] = useState<any[]>(initialCategories)
 
     useEffect(() => {
-    // Fetch categories and products dynamically
-    const fetchCategories = async () => {
-      try {
-        const [catRes, prodRes] = await Promise.all([
-          fetch('/api/categories'),
-          fetch('/api/products')
-        ]);
-        const catData = await catRes.json();
-        const prodData = await prodRes.json();
-        if (Array.isArray(catData)) {
-          setCategories(catData.map((c) => {
-            const catProducts = Array.isArray(prodData) ? prodData.filter(p => p.category?.slug === c.slug).slice(0, 8) : [];
-            return {
-             name: c.name,
-             slug: c.slug,
-             href: `/products/${c.slug}`,
-             hasMegaMenu: catProducts.length > 0,
-             subs: catProducts.length > 0 ? [{ title: 'Top Products', items: catProducts.map(p => ({ name: p.name, slug: p.slug })) }] : []
-            }
-          }));
-        }
-      } catch (err) {
-        console.error('Failed to load categories', err);
-      }
-    };
-    fetchCategories();
-  }, [])
+    setCategories(initialCategories);
+  }, [initialCategories])
 
   useEffect(() => {
     setMounted(true)
